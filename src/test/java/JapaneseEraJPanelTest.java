@@ -17,7 +17,11 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import javax.swing.AbstractButton;
+import javax.swing.JButton;
+import javax.swing.JTextField;
 import javax.swing.table.TableModel;
+import javax.swing.text.JTextComponent;
 
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.FieldOrMethod;
@@ -61,6 +65,12 @@ class JapaneseEraJPanelTest {
 		@Override
 		public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
 			//
+			if (Objects.equals(method != null ? method.getReturnType() : null, Void.TYPE)) {
+				//
+				return null;
+				//
+			} // if
+				//
 			final String name = getName(method);
 			//
 			if (Boolean.logicalAnd(Objects.equals(name, "toString"),
@@ -170,6 +180,10 @@ class JapaneseEraJPanelTest {
 					//
 					return proxy;
 					//
+				} else if (Objects.equals(name, "map")) {
+					//
+					return null;
+					//
 				} // if
 					//
 			} else if (proxy instanceof TableModel) {
@@ -225,6 +239,8 @@ class JapaneseEraJPanelTest {
 		//
 		Class<?>[] parameterTypes = null;
 		//
+		Class<?> parameterType = null;
+		//
 		Object result = null;
 		//
 		String name, toString = null;
@@ -248,9 +264,13 @@ class JapaneseEraJPanelTest {
 			//
 			for (int j = 0; j < parameterTypes.length; j++) {
 				//
-				if (Objects.equals(ArrayUtils.get(parameterTypes, j), Integer.TYPE)) {
+				if (Objects.equals(parameterType = ArrayUtils.get(parameterTypes, j), Integer.TYPE)) {
 					//
 					add(collection, Integer.valueOf(0));
+					//
+				} else if (Objects.equals(parameterType, Boolean.TYPE)) {
+					//
+					add(collection, Boolean.TRUE);
 					//
 				} else {
 					//
@@ -296,7 +316,9 @@ class JapaneseEraJPanelTest {
 							contains(Arrays.asList("getJapaneseEraSinceDates", "getEraAbbreviationMap"), name),
 							m.getParameterCount() == 0)
 					|| Boolean.logicalAnd(Objects.equals(name, "getCharacterMapByNamePrefix"),
-							Arrays.equals(parameterTypes, new Class<?>[] { String.class }))) {
+							Arrays.equals(parameterTypes, new Class<?>[] { String.class }))
+					|| Boolean.logicalAnd(Objects.equals(name, "getLocaleJapanese"),
+							Arrays.equals(parameterTypes, new Class<?>[] {}))) {
 				//
 				Assert.assertNotNull(result, toString);
 				//
@@ -355,6 +377,10 @@ class JapaneseEraJPanelTest {
 					//
 					add(collection, Integer.valueOf(0));
 					//
+				} else if (Objects.equals(parameterType, Boolean.TYPE)) {
+					//
+					add(collection, Boolean.TRUE);
+					//
 				} else if (Objects.equals(parameterType, FieldOrMethod.class)) {
 					//
 					add(collection, Narcissus.allocateInstance(Field.class));
@@ -374,6 +400,14 @@ class JapaneseEraJPanelTest {
 				} else if (Objects.equals(parameterType, DateFormat.class)) {
 					//
 					add(collection, new SimpleDateFormat());
+					//
+				} else if (Objects.equals(parameterType, JTextComponent.class)) {
+					//
+					add(collection, new JTextField());
+					//
+				} else if (Objects.equals(parameterType, AbstractButton.class)) {
+					//
+					add(collection, new JButton());
 					//
 				} else if (Objects.equals(parameterType, Instruction.class)) {
 					//
@@ -448,7 +482,9 @@ class JapaneseEraJPanelTest {
 					|| Boolean.logicalAnd(Objects.equals(name, "filter"),
 							Arrays.equals(parameterTypes, new Class<?>[] { Stream.class, Predicate.class }))
 					|| Boolean.logicalAnd(Objects.equals(name, "getInstructions"),
-							Arrays.equals(parameterTypes, new Class<?>[] { InstructionList.class }))) {
+							Arrays.equals(parameterTypes, new Class<?>[] { InstructionList.class }))
+					|| Boolean.logicalAnd(Objects.equals(name, "getLocaleJapanese"),
+							Arrays.equals(parameterTypes, new Class<?>[] {}))) {
 				//
 				Assert.assertNotNull(result, toString);
 				//

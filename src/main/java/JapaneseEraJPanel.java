@@ -29,18 +29,27 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.swing.AbstractButton;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.text.JTextComponent;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.FieldOrMethod;
@@ -68,19 +77,30 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import com.google.common.base.Strings;
 
 import io.github.toolfactory.narcissus.Narcissus;
 import net.miginfocom.swing.MigLayout;
 import tools.jackson.databind.ObjectMapper;
 
-public class JapaneseEraJPanel extends JPanel implements ActionListener {
+public class JapaneseEraJPanel extends JPanel implements ActionListener, DateChangeListener {
 
 	private static final long serialVersionUID = 1810789541222187125L;
 
 	private JButton btnCopyJson, btnExport = null;
 
 	private TableModel tm = null;
+
+	private DatePicker datePicker = null;
+
+	private Locale localeJapanese = null;
+
+	private ComboBoxModel<String> cbm = null;
+
+	private JTextField tfYear, tfMonth, tfDay = null;
 
 	private JapaneseEraJPanel()
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
@@ -117,11 +137,13 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 			//
 		} // try
 			//
-		add(jsp, String.format("wrap,span %1$s", 2));
+		final String wrap = "wrap";
+		//
+		add(jsp, String.format("%1$s,span %2$s", wrap, 5));
+		//
+		Collection<String> names = null;
 		//
 		if (entrySet(yearMonthDays) != null) {
-			//
-			Constructor<?> constructor = null;
 			//
 			YearMonthDay yearMonthDay = null;
 			//
@@ -133,7 +155,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 			//
 			Iterable<Entry<String, Character>> entrySet = null;
 			//
-			String key;
+			String key, name;
 			//
 			final Map<Object, Object> eraAbbreviationMap = getEraAbbreviationMap();
 			//
@@ -153,26 +175,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 				//
 				if (df1 == null) {
 					//
-					if (constructor == null) {
-						//
-						final List<Constructor<?>> list = toList(filter(
-								testAndApply(Objects::nonNull, Locale.class.getConstructors(), Arrays::stream, null),
-								c -> c != null && Arrays.equals(c.getParameterTypes(),
-										new Class<?>[] { String.class, String.class, String.class })));
-						//
-						if (IterableUtils.size(list) > 1) {
-							//
-							throw new IllegalStateException();
-							//
-						} else if (IterableUtils.size(list) == 1) {
-							//
-							constructor = IterableUtils.get(list, 0);
-							//
-						} // if
-							//
-					} // if
-						//
-					df1 = new SimpleDateFormat("G", cast(Locale.class, newInstance(constructor, "ja", "JP", "JP")));
+					df1 = new SimpleDateFormat("G", cast(Locale.class, getLocaleJapanese()));
 					//
 				} // if
 					//
@@ -187,12 +190,14 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 						x -> IterableUtils.get(x, 0), null);
 				//
 				dtm.addRow(new Object[] { key, getValue(eraAbbreviationEntry),
-						format(df1,
+						name = format(df1,
 								parse(df2 = ObjectUtils.getIfNull(df2, () -> new SimpleDateFormat("yyyyMMdd")),
 										Objects.toString(yearMonthDay))),
 						getCharacter(entrySet = ObjectUtils.getIfNull(entrySet, () -> entrySet(characterMap)),
 								commonPrefix, key),
 						yearMonthDay.year, yearMonthDay.month, yearMonthDay.day });
+				//
+				add(names = ObjectUtils.getIfNull(names, ArrayList::new), name);
 				//
 			} // for
 				//
@@ -201,13 +206,105 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 		jsp.setPreferredSize(new Dimension((int) jsp.getPreferredSize().getWidth(),
 				(dtm.getRowCount() + 1) * (jTable.getRowHeight() + 2)));
 		//
-		add(btnCopyJson = new JButton("Copy JSON"));
+		add(new JLabel());
 		//
-		btnCopyJson.addActionListener(this);
+		add(btnCopyJson = new JButton("Copy JSON"), String.format("span %1$s", 2));
 		//
-		add(btnExport = new JButton("Export"));
+		add(btnExport = new JButton("Export"), wrap);
 		//
-		btnExport.addActionListener(this);
+		add(new JLabel("Date"));
+		//
+		(datePicker = new DatePicker()).addDateChangeListener(this);
+		//
+		add(datePicker, String.format("%1$s,span %2$s", wrap, 4));
+		//
+		add(new JLabel("Japnese Date"));
+		//
+		add(new JComboBox<>(cbm = new DefaultComboBoxModel<>(names != null ? names.toArray(String[]::new) : null)));
+		//
+		final JPanel panel = new JPanel();
+		//
+		panel.setLayout(new MigLayout());
+		//
+		panel.add(tfYear = new JTextField(), String.format("wmin %1$s", 50));
+		//
+		panel.add(new JLabel("年"));
+		//
+		panel.add(tfMonth = new JTextField(), String.format("wmin %1$s", 50));
+		//
+		panel.add(new JLabel("月"));
+		//
+		panel.add(tfDay = new JTextField(), String.format("wmin %1$s", 50));
+		//
+		panel.add(new JLabel("日"));
+		//
+		add(panel, String.format("span %1$s", 2));
+		//
+		forEach(map(
+				filter(stream(FieldUtils.getAllFieldsList(getClass())),
+						f -> f != null && AbstractButton.class.isAssignableFrom(f.getType())),
+				f -> cast(AbstractButton.class, Narcissus.getField(this, f))), x -> addActionListener(x, this));
+		//
+		forEach(map(
+				filter(stream(FieldUtils.getAllFieldsList(getClass())),
+						f -> f != null && JTextComponent.class.isAssignableFrom(f.getType())),
+				f -> cast(JTextComponent.class, Narcissus.getField(this, f))), x -> setEditable(x, false));
+		//
+	}
+
+	private static <T> void setEditable(final JTextComponent instance, final boolean editable) {
+		if (instance != null) {
+			instance.setEditable(editable);
+		}
+	}
+
+	private static <T> void forEach(final Stream<T> instance, final Consumer<? super T> action) {
+		if (instance != null) {
+			instance.forEach(action);
+		}
+	}
+
+	private static <T, R> Stream<R> map(final Stream<T> instance, final Function<? super T, ? extends R> mapper) {
+		return instance != null ? instance.map(mapper) : null;
+	}
+
+	private static void addActionListener(final AbstractButton instance, final ActionListener actionListener) {
+		if (instance != null) {
+			instance.addActionListener(actionListener);
+		}
+	}
+
+	private Locale getLocaleJapanese() {
+		//
+		if (localeJapanese == null) {
+			//
+			final List<Constructor<?>> list = toList(
+					filter(testAndApply(Objects::nonNull, Locale.class.getConstructors(), Arrays::stream, null),
+							c -> c != null && Arrays.equals(c.getParameterTypes(),
+									new Class<?>[] { String.class, String.class, String.class })));
+			//
+			if (IterableUtils.size(list) > 1) {
+				//
+				throw new IllegalStateException();
+				//
+			} // if
+				//
+			try {
+				//
+				localeJapanese = cast(Locale.class,
+						newInstance(
+								testAndApply(x -> IterableUtils.size(x) == 1, list, x -> IterableUtils.get(x, 0), null),
+								"ja", "JP", "JP"));
+				//
+			} catch (final InstantiationException | IllegalAccessException | InvocationTargetException e) {
+				//
+				throw new RuntimeException(e);
+				//
+			} // try
+				//
+		} // if
+			//
+		return localeJapanese;
 		//
 	}
 
@@ -386,7 +483,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 	}
 
 	private static String format(final DateFormat instance, final Date date) {
-		return instance != null ? instance.format(date) : null;
+		return instance != null && date != null ? instance.format(date) : null;
 	}
 
 	private static <T> T newInstance(final Constructor<T> instance, final Object... args)
@@ -941,6 +1038,67 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 
 	private static Object getSource(final EventObject instance) {
 		return instance != null ? instance.getSource() : null;
+	}
+
+	@Override
+	public void dateChanged(final DateChangeEvent event) {
+		//
+		if (Objects.equals(event != null ? event.getSource() : null, datePicker)) {
+			//
+			final String[] ss = StringUtils.split(
+					format(new SimpleDateFormat("GG yy MM dd", getLocaleJapanese()), testAndApply(Objects::nonNull,
+							event != null ? event.getNewDate() : null, java.sql.Date::valueOf, null)));
+			//
+			String s = null;
+			//
+			final List<Consumer<String>> cs = Arrays.asList(x -> setText(tfYear, x), x -> setText(tfMonth, x),
+					x -> setText(tfDay, x));
+			//
+			Consumer<String> c = null;
+			//
+			for (int i = 0; ss != null && i < ss.length; i++) {
+				//
+				s = ArrayUtils.get(ss, i);
+				//
+				if (i == 0) {
+					//
+					cbm.setSelectedItem(s);
+					//
+				} else if (i <= IterableUtils.size(cs) && (c = IterableUtils.get(cs, i - 1)) != null) {
+					//
+					c.accept(s);
+					//
+				} else {
+					//
+					throw new IllegalStateException();
+					//
+				} // if
+					//
+			} // for
+				//
+		} // if
+			//
+	}
+
+	private static void setText(final JTextComponent instance, final String text) {
+		//
+		try {
+			//
+			if (instance == null || (text != null
+					&& Narcissus.getObjectField(text, String.class.getDeclaredField("value")) == null)) {
+				//
+				return;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		instance.setText(text);
+		//
 	}
 
 }
