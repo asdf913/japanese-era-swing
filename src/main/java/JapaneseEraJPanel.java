@@ -1,6 +1,11 @@
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -11,9 +16,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.chrono.JapaneseEra;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EventObject;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,12 +31,14 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.FieldOrMethod;
@@ -55,10 +64,16 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import com.google.common.base.Strings;
 
 import io.github.toolfactory.narcissus.Narcissus;
+import net.miginfocom.swing.MigLayout;
+import tools.jackson.databind.ObjectMapper;
 
-public class JapaneseEraJPanel extends JPanel {
+public class JapaneseEraJPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1810789541222187125L;
+
+	private JButton btnCopyJson = null;
+
+	private TableModel tm = null;
 
 	private JapaneseEraJPanel()
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
@@ -70,12 +85,14 @@ public class JapaneseEraJPanel extends JPanel {
 	private void init()
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
 		//
+		setLayout(new MigLayout());
+		//
 		final Map<String, YearMonthDay> yearMonthDays = getJapaneseEraSinceDates();
 		//
 		final DefaultTableModel dtm = new DefaultTableModel(
 				new Object[] { "", "Abbr", "Name", "Emoji", "Year", "Month", "Day" }, 0);
 		//
-		final JTable jTable = new JTable(dtm);
+		final JTable jTable = new JTable(tm = dtm);
 		//
 		final JScrollPane jsp = new JScrollPane(jTable);
 		//
@@ -93,7 +110,7 @@ public class JapaneseEraJPanel extends JPanel {
 			//
 		} // try
 			//
-		add(jsp);
+		add(jsp, "wrap");
 		//
 		if (entrySet(yearMonthDays) != null) {
 			//
@@ -177,6 +194,10 @@ public class JapaneseEraJPanel extends JPanel {
 		jsp.setPreferredSize(new Dimension((int) jsp.getPreferredSize().getWidth(),
 				(dtm.getRowCount() + 1) * (jTable.getRowHeight() + 2)));
 		//
+		add(btnCopyJson = new JButton("Copy JSON"));
+		//
+		btnCopyJson.addActionListener(this);
+		//
 	}
 
 	private static <K, V> Collection<Entry<K, V>> entrySet(final Map<K, V> instance) {
@@ -195,7 +216,7 @@ public class JapaneseEraJPanel extends JPanel {
 			//
 			return getValue(IterableUtils.get(list, 0));
 			//
-		} else if (entries != null) {
+		} else if (entries != null && entries.iterator() != null) {
 			//
 			String k, s;
 			//
@@ -251,7 +272,29 @@ public class JapaneseEraJPanel extends JPanel {
 
 	private static boolean startsWith(final org.apache.commons.lang3.Strings instance, final CharSequence str,
 			final CharSequence prefix) {
-		return instance != null && instance.startsWith(str, prefix);
+		//
+		try {
+			//
+			if (instance == null
+					|| (str instanceof String
+							&& Narcissus.getObjectField(str, String.class.getDeclaredField("value")) == null)
+					|| (prefix instanceof String
+							&& Narcissus.getObjectField(prefix, String.class.getDeclaredField("value")) == null)
+
+			) {
+				//
+				return false;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.startsWith(str, prefix);
+		//
 	}
 
 	private static <V> V getValue(final Entry<?, V> instance) {
@@ -313,7 +356,24 @@ public class JapaneseEraJPanel extends JPanel {
 	}
 
 	private static Date parse(final DateFormat instance, final String string) throws ParseException {
-		return instance != null ? instance.parse(string) : null;
+		//
+		try {
+			//
+			if (instance == null || string == null
+					|| Narcissus.getObjectField(string, String.class.getDeclaredField("value")) == null) {
+				//
+				return null;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.parse(string);
+		//
 	}
 
 	private static String format(final DateFormat instance, final Date date) {
@@ -453,11 +513,43 @@ public class JapaneseEraJPanel extends JPanel {
 	}
 
 	private static String getName(final FieldOrMethod instance) {
-		return instance != null ? instance.getName() : null;
+		try {
+			//
+			if (instance == null || FieldUtils.readField(instance, "constant_pool", true) == null) {
+				//
+				return null;
+				//
+			} // if
+				//
+		} catch (final IllegalAccessException e) {
+			//
+			return null;
+			//
+		} // try
+			//
+		return instance.getName();
+		//
 	}
 
 	private static InputStream getResourceAsStream(final Class<?> instance, final String name) {
-		return instance != null ? instance.getResourceAsStream(name) : null;
+		//
+		try {
+			//
+			if (instance == null || name == null
+					|| Narcissus.getObjectField(name, String.class.getDeclaredField("value")) == null) {
+				//
+				return null;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.getResourceAsStream(name);
+		//
 	}
 
 	private static <K, V> void put(final Map<K, V> instance, final K key, final V value) {
@@ -486,7 +578,24 @@ public class JapaneseEraJPanel extends JPanel {
 	}
 
 	private static String replace(final String instance, final CharSequence target, final CharSequence replacement) {
-		return instance != null ? instance.replace(target, replacement) : null;
+		//
+		try {
+			//
+			if (instance == null || (instance instanceof String
+					&& Narcissus.getObjectField(instance, String.class.getDeclaredField("value")) == null)) {
+				//
+				return null;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.replace(target, replacement);
+		//
 	}
 
 	public static void main(final String[] args)
@@ -660,6 +769,83 @@ public class JapaneseEraJPanel extends JPanel {
 
 	private static int intValue(final Number instance, final int defaultValue) {
 		return instance != null ? instance.intValue() : defaultValue;
+	}
+
+	@Override
+	public void actionPerformed(final ActionEvent evt) {
+		//
+		if (Objects.equals(getSource(evt), btnCopyJson)) {
+			//
+			final int columnCount = tm != null ? tm.getColumnCount() : 0;
+			//
+			List<Map<?, ?>> list = null;
+			//
+			Map<Object, Object> map = null;
+			//
+			Object value = null;
+			//
+			final Map<Integer, String> fieldNames = Map.of(Integer.valueOf(0), "englishName", Integer.valueOf(1),
+					"abbreviation", Integer.valueOf(2), "japaneseName", Integer.valueOf(3), "emoji", Integer.valueOf(4),
+					"year", Integer.valueOf(5), "month", Integer.valueOf(6), "day");
+			//
+			for (int i = 0; tm != null && i < tm.getRowCount(); i++) {
+				//
+				for (int j = 0; j < columnCount; j++) {
+					//
+					value = tm.getValueAt(i, j);
+					//
+					if (j == 0) {
+						//
+						add(list = ObjectUtils.getIfNull(list, ArrayList::new), map = new LinkedHashMap<>());
+						//
+					} // if
+						//
+					if (containsKey(fieldNames, Integer.valueOf(i))) {
+						//
+						put(map, get(fieldNames, Integer.valueOf(j)), value);
+						//
+					} else {
+						//
+						throw new IllegalStateException();
+						//
+					} // if
+						//
+				} // for
+					//
+			} // for
+				//
+			final Toolkit toolkit = Toolkit.getDefaultToolkit();
+			//
+			final Clipboard clipboard = toolkit != null && !GraphicsEnvironment.isHeadless()
+					? toolkit.getSystemClipboard()
+					: null;
+			//
+			if (clipboard != null) {
+				//
+				clipboard.setContents(new StringSelection(new ObjectMapper().writeValueAsString(list)), null);
+				//
+			} // if
+				//
+		} // if
+			//
+	}
+
+	private static <V> V get(final Map<?, V> instance, final Object key) {
+		return instance != null ? instance.get(key) : null;
+	}
+
+	private static boolean containsKey(final Map<?, ?> instance, final Object key) {
+		return instance != null && instance.containsKey(key);
+	}
+
+	private static <E> void add(final Collection<E> instance, final E item) {
+		if (instance != null) {
+			instance.add(item);
+		}
+	}
+
+	private static Object getSource(final EventObject instance) {
+		return instance != null ? instance.getSource() : null;
 	}
 
 }

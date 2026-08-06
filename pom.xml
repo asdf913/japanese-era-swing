@@ -40,6 +40,18 @@
 			<artifactId>guava</artifactId>
 			<version>33.6.0-jre</version>
 		</dependency>
+		<!--https://mvnrepository.com/artifact/com.miglayout/miglayout-swing-->
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout-swing</artifactId>
+			<version>11.4.3</version>
+		</dependency>
+		<!--https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind -->
+		<dependency>
+			<groupId>tools.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>3.2.1</version>
+		</dependency>
 		<!--https://mvnrepository.com/artifact/org.testng/testng-->
 		<dependency>
 			<groupId>org.testng</groupId>
