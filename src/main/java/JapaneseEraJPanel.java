@@ -279,9 +279,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 					|| (str instanceof String
 							&& Narcissus.getObjectField(str, String.class.getDeclaredField("value")) == null)
 					|| (prefix instanceof String
-							&& Narcissus.getObjectField(prefix, String.class.getDeclaredField("value")) == null)
-
-			) {
+							&& Narcissus.getObjectField(prefix, String.class.getDeclaredField("value")) == null)) {
 				//
 				return false;
 				//
