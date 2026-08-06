@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import javax.swing.table.TableModel;
+
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.FieldOrMethod;
 import org.apache.bcel.generic.ConstantPushInstruction;
@@ -54,7 +56,7 @@ class JapaneseEraJPanelTest {
 
 		private Boolean put, test, add, containsKey;
 
-		private Integer length;
+		private Integer length, columnCount;
 
 		@Override
 		public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
@@ -167,6 +169,14 @@ class JapaneseEraJPanelTest {
 				} else if (Objects.equals(name, "filter")) {
 					//
 					return proxy;
+					//
+				} // if
+					//
+			} else if (proxy instanceof TableModel) {
+				//
+				if (Objects.equals(name, "getColumnCount")) {
+					//
+					return columnCount;
 					//
 				} // if
 					//
@@ -379,7 +389,7 @@ class JapaneseEraJPanelTest {
 						//
 						ih.put = ih.test = ih.add = ih.containsKey = Boolean.TRUE;
 						//
-						ih.length = Integer.valueOf(0);
+						ih.length = ih.columnCount = Integer.valueOf(0);
 						//
 					} // if
 						//

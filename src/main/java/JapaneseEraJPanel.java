@@ -6,8 +6,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -60,6 +62,11 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.google.common.base.Strings;
 
@@ -71,7 +78,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1810789541222187125L;
 
-	private JButton btnCopyJson = null;
+	private JButton btnCopyJson, btnExport = null;
 
 	private TableModel tm = null;
 
@@ -110,7 +117,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 			//
 		} // try
 			//
-		add(jsp, "wrap");
+		add(jsp, String.format("wrap,span %1$s", 2));
 		//
 		if (entrySet(yearMonthDays) != null) {
 			//
@@ -197,6 +204,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 		add(btnCopyJson = new JButton("Copy JSON"));
 		//
 		btnCopyJson.addActionListener(this);
+		//
+		add(btnExport = new JButton("Export"));
+		//
+		btnExport.addActionListener(this);
 		//
 	}
 
@@ -772,9 +783,11 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(final ActionEvent evt) {
 		//
-		if (Objects.equals(getSource(evt), btnCopyJson)) {
+		final Object source = getSource(evt);
+		//
+		if (Objects.equals(source, btnCopyJson)) {
 			//
-			final int columnCount = tm != null ? tm.getColumnCount() : 0;
+			final int columnCount = getColumnCount(tm);
 			//
 			List<Map<?, ?>> list = null;
 			//
@@ -824,8 +837,92 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener {
 				//
 			} // if
 				//
+		} else if (Objects.equals(source, btnExport)) {
+			//
+			final int columnCount = getColumnCount(tm);
+			//
+			try (final Workbook wb = new XSSFWorkbook();
+					final OutputStream os = new FileOutputStream("JapaneseEra.xlsx")) {
+				//
+				Sheet sheet = null;
+				//
+				Row row = null;
+				//
+				Cell cell = null;
+				//
+				Object value = null;
+				//
+				for (int i = 0; tm != null && i < tm.getRowCount(); i++) {
+					//
+					if ((sheet = ObjectUtils.getIfNull(sheet, () -> wb.createSheet())) == null) {
+						//
+						continue;
+						//
+					} // if
+						//
+					if (sheet.getPhysicalNumberOfRows() == 0
+							&& (row = sheet.createRow(sheet.getPhysicalNumberOfRows())) != null) {
+						//
+						for (int j = 0; j < columnCount; j++) {
+							//
+							if ((cell = row.createCell(row.getPhysicalNumberOfCells())) == null) {
+								//
+								continue;
+								//
+							} // if
+								//
+							cell.setCellValue(tm.getColumnName(j));
+							//
+						} // for
+							//
+					} // if
+						//
+					if ((row = sheet.createRow(sheet.getPhysicalNumberOfRows())) == null) {
+						//
+						continue;
+						//
+					} // if
+						//
+					for (int j = 0; j < columnCount; j++) {
+						//
+						if ((cell = row.createCell(row.getPhysicalNumberOfCells())) == null) {
+							//
+							continue;
+							//
+						} // if
+							//
+						if ((value = tm.getValueAt(i, j)) instanceof String || value instanceof Character) {
+							//
+							cell.setCellValue(Objects.toString(value));
+							//
+						} else if (value instanceof Number number && number != null) {
+							//
+							cell.setCellValue(number.doubleValue());
+							//
+						} else {
+							//
+							throw new IllegalStateException(Objects.toString(value.getClass()));
+							//
+						} // if
+							//
+					} // for
+						//
+				} // for
+					//
+				wb.write(os);
+				//
+			} catch (final IOException e) {
+				//
+				throw new RuntimeException(e);
+				//
+			} // try
+				//
 		} // if
 			//
+	}
+
+	private static int getColumnCount(final TableModel instance) {
+		return instance != null ? instance.getColumnCount() : 0;
 	}
 
 	private static <V> V get(final Map<?, V> instance, final Object key) {
