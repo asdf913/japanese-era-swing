@@ -220,7 +220,14 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		add(new JLabel("Japnese Date"));
 		//
-		add(new JComboBox<>(cbm = new DefaultComboBoxModel<>(names != null ? names.toArray(String[]::new) : null)));
+		final JComboBox<String> jcb = new JComboBox<>(
+				cbm = new DefaultComboBoxModel<>(names != null ? names.toArray(String[]::new) : null));
+		//
+		jcb.setEnabled(false);
+		//
+		jcb.setSelectedItem(null);
+		//
+		add(jcb);
 		//
 		final JPanel panel = new JPanel();
 		//
