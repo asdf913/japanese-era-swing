@@ -1,5 +1,6 @@
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
@@ -411,6 +412,10 @@ class JapaneseEraJPanelTest {
 					//
 					add(collection, new NOP());
 					//
+				} else if (Objects.equals(parameterType, Executable.class)) {
+					//
+					add(collection, Object.class.getDeclaredMethod("toString"));
+					//
 				} else if (parameterType != null && parameterType.isArray()) {
 					//
 					add(collection, Array.newInstance(parameterType != null ? parameterType.componentType() : null, 0));
@@ -482,7 +487,9 @@ class JapaneseEraJPanelTest {
 					|| Boolean.logicalAnd(Objects.equals(name, "getInstructions"),
 							Arrays.equals(parameterTypes, new Class<?>[] { InstructionList.class }))
 					|| Boolean.logicalAnd(Objects.equals(name, "getLocaleJapanese"),
-							Arrays.equals(parameterTypes, new Class<?>[] {}))) {
+							Arrays.equals(parameterTypes, new Class<?>[] {}))
+					|| Boolean.logicalAnd(Objects.equals(name, "getParameterTypes"),
+							Arrays.equals(parameterTypes, new Class<?>[] { Executable.class }))) {
 				//
 				Assert.assertNotNull(result, toString);
 				//

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
@@ -295,7 +296,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			final List<Constructor<?>> list = toList(
 					filter(testAndApply(Objects::nonNull, Locale.class.getConstructors(), Arrays::stream, null),
-							c -> c != null && Arrays.equals(c.getParameterTypes(),
+							c -> Arrays.equals(getParameterTypes(c),
 									new Class<?>[] { String.class, String.class, String.class })));
 			//
 			if (IterableUtils.size(list) > 1) {
@@ -321,6 +322,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		return localeJapanese;
 		//
+	}
+
+	private static Class<?>[] getParameterTypes(final Executable instance) {
+		return instance != null ? instance.getParameterTypes() : null;
 	}
 
 	private static <K, V> Collection<Entry<K, V>> entrySet(final Map<K, V> instance) {
