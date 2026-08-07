@@ -338,7 +338,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		final List<Entry<String, Character>> list = toList(
 				filter(testAndApply(Objects::nonNull, spliterator(entries), x -> StreamSupport.stream(x, false), null),
-						x -> getKey(x) != null && getKey(x).endsWith(entryKey)));
+						x -> endsWith(getKey(x), entryKey)));
 		//
 		if (IterableUtils.size(list) == 1) {
 			//
@@ -387,6 +387,27 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		} // if
 			//
 		return null;
+		//
+	}
+
+	private static boolean endsWith(final String instance, final String suffix) {
+		//
+		try {
+			//
+			if (instance == null
+					|| Narcissus.getObjectField(instance, String.class.getDeclaredField("value")) == null) {
+				//
+				return false;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.endsWith(suffix);
 		//
 	}
 
