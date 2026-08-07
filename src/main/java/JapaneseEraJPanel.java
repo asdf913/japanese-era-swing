@@ -3,7 +3,9 @@ import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
@@ -39,6 +41,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -85,12 +88,13 @@ import com.google.common.base.Strings;
 import io.github.toolfactory.narcissus.Narcissus;
 import net.miginfocom.swing.MigLayout;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
 
 public class JapaneseEraJPanel extends JPanel implements ActionListener, DateChangeListener {
 
 	private static final long serialVersionUID = 1810789541222187125L;
 
-	private JButton btnCopyJson, btnExport = null;
+	private AbstractButton btnCopyJson, btnExport, cbPrettyJson = null;
 
 	private TableModel tm = null;
 
@@ -102,6 +106,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private JTextField tfYear, tfMonth, tfDay = null;
 
+	private ObjectMapper objectMapper = null;
+
 	private JapaneseEraJPanel()
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
 		//
@@ -112,7 +118,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 	private void init()
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
 		//
-		setLayout(new MigLayout());
+		setLayout(new MigLayout("debug"));
 		//
 		final Map<String, YearMonthDay> yearMonthDays = getJapaneseEraSinceDates();
 		//
@@ -208,7 +214,9 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		add(new JLabel());
 		//
-		add(btnCopyJson = new JButton("Copy JSON"), String.format("span %1$s", 2));
+		add(cbPrettyJson = new JCheckBox("Pretty JSON"));
+		//
+		add(btnCopyJson = new JButton("Copy JSON"));
 		//
 		add(btnExport = new JButton("Export"), wrap);
 		//
@@ -216,7 +224,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		(datePicker = new DatePicker()).addDateChangeListener(this);
 		//
-		add(datePicker, String.format("%1$s,span %2$s", wrap, 4));
+		add(datePicker, String.format("%1$s,span %2$s", wrap, 3));
 		//
 		add(new JLabel("Japnese Date"));
 		//
@@ -935,9 +943,16 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 					? toolkit.getSystemClipboard()
 					: null;
 			//
-			if (clipboard != null) {
+			if ((objectMapper = ObjectUtils.getIfNull(objectMapper, ObjectMapper::new)) != null
+					&& isSelected(cbPrettyJson)) {
 				//
-				clipboard.setContents(new StringSelection(new ObjectMapper().writeValueAsString(list)), null);
+				setContents(clipboard,
+						new StringSelection(writeValueAsString(objectMapper.writerWithDefaultPrettyPrinter(), list)),
+						null);
+				//
+			} else {
+				//
+				setContents(clipboard, new StringSelection(writeValueAsString(objectMapper, list)), null);
 				//
 			} // if
 				//
@@ -1023,6 +1038,58 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 		} // if
 			//
+	}
+
+	private static boolean isSelected(final AbstractButton instance) {
+		return instance != null && instance.isSelected();
+	}
+
+	private static void setContents(final Clipboard instance, final Transferable contents, final ClipboardOwner owner) {
+		if (instance != null) {
+			instance.setContents(contents, owner);
+		}
+	}
+
+	private static String writeValueAsString(final ObjectWriter instance, final Object value) {
+		//
+		try {
+			//
+			if (instance == null || Narcissus.getObjectField(instance,
+					ObjectWriter.class.getDeclaredField("_generatorFactory")) == null) {
+				//
+				return null;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.writeValueAsString(value);
+		//
+	}
+
+	private static String writeValueAsString(final ObjectMapper instance, final Object value) {
+		//
+		try {
+			//
+			if (instance == null || Narcissus.getObjectField(instance,
+					ObjectMapper.class.getDeclaredField("_streamFactory")) == null) {
+				//
+				return null;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.writeValueAsString(value);
+		//
 	}
 
 	private static int getColumnCount(final TableModel instance) {
