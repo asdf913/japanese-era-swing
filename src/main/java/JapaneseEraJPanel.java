@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -335,10 +336,9 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 	private static Character getCharacter(final Iterable<Entry<String, Character>> entries, final String commonPrefix,
 			final String entryKey) {
 		//
-		final List<Entry<String, Character>> list = toList(filter(
-				testAndApply(Objects::nonNull, entries != null ? entries.spliterator() : null,
-						x -> StreamSupport.stream(x, false), null),
-				x -> getKey(x) != null && getKey(x).endsWith(entryKey)));
+		final List<Entry<String, Character>> list = toList(
+				filter(testAndApply(Objects::nonNull, spliterator(entries), x -> StreamSupport.stream(x, false), null),
+						x -> getKey(x) != null && getKey(x).endsWith(entryKey)));
 		//
 		if (IterableUtils.size(list) == 1) {
 			//
@@ -388,6 +388,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		return null;
 		//
+	}
+
+	private static <T> Spliterator<T> spliterator(final Iterable<T> instance) {
+		return instance != null ? instance.spliterator() : null;
 	}
 
 	private static <K> K getKey(final Entry<K, ?> instance) {
