@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EventObject;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -344,7 +345,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			return getValue(IterableUtils.get(list, 0));
 			//
-		} else if (entries != null && entries.iterator() != null) {
+		} else if (iterator(entries) != null) {
 			//
 			String k, s;
 			//
@@ -409,6 +410,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		return instance.endsWith(suffix);
 		//
+	}
+
+	private static <T> Iterator<T> iterator(final Iterable<T> instance) {
+		return instance != null ? instance.iterator() : null;
 	}
 
 	private static <T> Spliterator<T> spliterator(final Iterable<T> instance) {
