@@ -118,7 +118,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 	private void init()
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
 		//
-		setLayout(new MigLayout("debug"));
+		setLayout(new MigLayout());
 		//
 		final Map<String, YearMonthDay> yearMonthDays = getJapaneseEraSinceDates();
 		//
