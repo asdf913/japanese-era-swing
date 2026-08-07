@@ -214,7 +214,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		add(new JLabel());
 		//
-		add(cbPrettyJson = new JCheckBox("Pretty JSON"));
+		add(cbPrettyJson = new JCheckBox("Pretty JSON"), String.format("span %1$s", 2));
 		//
 		add(btnCopyJson = new JButton("Copy JSON"));
 		//
@@ -253,7 +253,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		panel.add(new JLabel("日"));
 		//
-		add(panel, String.format("span %1$s", 2));
+		add(panel, String.format("span %1$s", 3));
 		//
 		forEach(map(
 				filter(stream(FieldUtils.getAllFieldsList(getClass())),
