@@ -368,8 +368,6 @@ class JapaneseEraJPanelTest {
 				//
 			clear(collection = ObjectUtils.getIfNull(collection, ArrayList::new));
 			//
-			System.out.println(m);
-			//
 			for (int j = 0; j < parameterTypes.length; j++) {
 				//
 				if (Boolean.logicalOr(Objects.equals(parameterType = ArrayUtils.get(parameterTypes, j), Integer.TYPE),
