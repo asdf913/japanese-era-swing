@@ -97,7 +97,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private static final long serialVersionUID = 1810789541222187125L;
 
-	private AbstractButton btnCopyJson, btnExport, cbPrettyJson = null;
+	private AbstractButton btnCopyJson, btnExport, cbPrettyJson, btnCopyEmoji = null;
 
 	private TableModel tm = null;
 
@@ -110,6 +110,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 	private JTextField tfYear, tfMonth, tfDay = null;
 
 	private ObjectMapper objectMapper = null;
+
+	private JComboBox<Character> jcb = null;
 
 	private JapaneseEraJPanel()
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
@@ -152,6 +154,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		Collection<String> names = null;
 		//
+		List<Character> characters = null;
+		//
 		if (entrySet(yearMonthDays) != null) {
 			//
 			YearMonthDay yearMonthDay = null;
@@ -171,6 +175,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			List<Entry<Object, Object>> eraAbbreviationList = null;
 			//
 			Entry<Object, Object> eraAbbreviationEntry = null;
+			//
+			Character character = null;
 			//
 			for (final Entry<String, YearMonthDay> entry : entrySet(yearMonthDays)) {
 				//
@@ -198,13 +204,16 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				eraAbbreviationEntry = testAndApply(x -> IterableUtils.size(x) == 1, eraAbbreviationList,
 						x -> IterableUtils.get(x, 0), null);
 				//
+				add(characters = ObjectUtils.getIfNull(characters, ArrayList::new),
+						character = getCharacter(
+								entrySet = ObjectUtils.getIfNull(entrySet, () -> entrySet(characterMap)), commonPrefix,
+								key));
+				//
 				dtm.addRow(new Object[] { key, getValue(eraAbbreviationEntry),
 						name = format(df1,
 								parse(df2 = ObjectUtils.getIfNull(df2, () -> new SimpleDateFormat("yyyyMMdd")),
 										Objects.toString(yearMonthDay))),
-						getCharacter(entrySet = ObjectUtils.getIfNull(entrySet, () -> entrySet(characterMap)),
-								commonPrefix, key),
-						yearMonthDay.year, yearMonthDay.month, yearMonthDay.day });
+						character, yearMonthDay.year, yearMonthDay.month, yearMonthDay.day });
 				//
 				add(names = ObjectUtils.getIfNull(names, ArrayList::new), name);
 				//
@@ -231,14 +240,14 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		add(new JLabel("Japnese Date"));
 		//
-		final JComboBox<String> jcb = new JComboBox<>(
+		final JComboBox<String> jcb1 = new JComboBox<>(
 				cbm = new DefaultComboBoxModel<>(names != null ? names.toArray(String[]::new) : null));
 		//
-		jcb.setEnabled(false);
+		jcb1.setEnabled(false);
 		//
-		jcb.setSelectedItem(null);
+		jcb1.setSelectedItem(null);
 		//
-		add(jcb);
+		add(jcb1);
 		//
 		final JPanel panel = new JPanel();
 		//
@@ -256,7 +265,19 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		panel.add(new JLabel("日"));
 		//
-		add(panel, String.format("span %1$s", 3));
+		add(panel, String.format("span %1$s,%2$s", 3, wrap));
+		//
+		add(new JLabel("Emoji"));
+		//
+		(jcb = new JComboBox<>(
+				new DefaultComboBoxModel<>(characters != null ? characters.toArray(Character[]::new) : null)))
+				.setSelectedItem(null);
+		//
+		jcb.addActionListener(this);
+		//
+		add(jcb);
+		//
+		add(btnCopyEmoji = new JButton("Copy"));
 		//
 		forEach(map(
 				filter(stream(FieldUtils.getAllFieldsList(getClass())),
@@ -993,8 +1014,6 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 		} else if (Objects.equals(source, btnExport)) {
 			//
-			final int columnCount = getColumnCount(tm);
-			//
 			try (final Workbook wb = new XSSFWorkbook();
 					final OutputStream os = new FileOutputStream("JapaneseEra.xlsx")) {
 				//
@@ -1005,6 +1024,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				Cell cell = null;
 				//
 				Object value = null;
+				//
+				final int columnCount = getColumnCount(tm);
 				//
 				for (int i = 0; tm != null && i < tm.getRowCount(); i++) {
 					//
@@ -1063,16 +1084,57 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						//
 				} // for
 					//
-				wb.write(os);
-				//
+				if (!isTestMode()) {
+					//
+					wb.write(os);
+					//
+				} // if
+					//
 			} catch (final IOException e) {
 				//
 				throw new RuntimeException(e);
 				//
 			} // try
 				//
+		} else if (Objects.equals(source, btnCopyEmoji)) {
+			//
+			final Character character = cast(Character.class, getSelectedItem(jcb));
+			//
+			if (character != null) {
+				//
+				final Toolkit toolkit = Toolkit.getDefaultToolkit();
+				//
+				final Clipboard clipboard = toolkit != null && !GraphicsEnvironment.isHeadless()
+						? toolkit.getSystemClipboard()
+						: null;
+				//
+				setContents(clipboard, new StringSelection(new String(new char[] { character.charValue() })), null);
+				//
+			} // if
+				//
 		} // if
 			//
+	}
+
+	private static Object getSelectedItem(final JComboBox<?> instance) {
+		//
+		try {
+			//
+			if (instance == null
+					|| Narcissus.getObjectField(instance, JComboBox.class.getDeclaredField("dataModel")) == null) {
+				//
+				return null;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.getSelectedItem();
+		//
 	}
 
 	private static boolean isSelected(final AbstractButton instance) {

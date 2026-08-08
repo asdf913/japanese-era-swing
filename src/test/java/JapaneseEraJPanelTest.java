@@ -1,3 +1,4 @@
+import java.awt.event.ActionEvent;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
@@ -34,7 +35,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.function.FailableFunction;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -231,6 +234,16 @@ class JapaneseEraJPanelTest {
 		}
 	}
 
+	private JapaneseEraJPanel instance = null;
+
+	@BeforeMethod
+	void beforeMethod() {
+		//
+		instance = ObjectUtils.getIfNull(instance,
+				() -> (JapaneseEraJPanel) Narcissus.allocateInstance(JapaneseEraJPanel.class));
+		//
+	}
+
 	@Test
 	void testNull() throws Throwable {
 		//
@@ -249,8 +262,6 @@ class JapaneseEraJPanelTest {
 		Object[] os = null;
 		//
 		Collection<Object> collection = null;
-		//
-		JapaneseEraJPanel instance = null;
 		//
 		for (int i = 0; ms != null && i < ms.length; i++) {
 			//
@@ -351,8 +362,6 @@ class JapaneseEraJPanelTest {
 		Object[] os = null;
 		//
 		Collection<Object> collection = null;
-		//
-		JapaneseEraJPanel instance = null;
 		//
 		IH ih = null;
 		//
@@ -521,6 +530,33 @@ class JapaneseEraJPanelTest {
 
 	private static Object[] toArray(final Collection<?> instance) {
 		return instance != null ? instance.toArray() : null;
+	}
+
+	@Test
+	void testActionPerformed() throws IllegalAccessException {
+		//
+		if (instance == null) {
+			//
+			return;
+			//
+		} // if
+			//
+			// btnExport
+			//
+		final AbstractButton btnExport = new JButton();
+		//
+		FieldUtils.writeDeclaredField(instance, "btnExport", btnExport, true);
+		//
+		instance.actionPerformed(new ActionEvent(btnExport, 0, null));
+		//
+		// btnCopyEmoji
+		//
+		final AbstractButton btnCopyEmoji = new JButton();
+		//
+		FieldUtils.writeDeclaredField(instance, "btnCopyEmoji", btnCopyEmoji, true);
+		//
+		instance.actionPerformed(new ActionEvent(btnCopyEmoji, 0, null));
+		//
 	}
 
 }
