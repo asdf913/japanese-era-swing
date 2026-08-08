@@ -1233,7 +1233,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 				if (i == 0) {
 					//
-					cbm.setSelectedItem(s);
+					setSelectedItem(cbm, s);
 					//
 				} else if (i <= IterableUtils.size(cs) && (c = IterableUtils.get(cs, i - 1)) != null) {
 					//
@@ -1249,6 +1249,12 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 		} // if
 			//
+	}
+
+	private static void setSelectedItem(final ComboBoxModel<?> instance, final Object item) {
+		if (instance != null) {
+			instance.setSelectedItem(item);
+		}
 	}
 
 	private static void setText(final JTextComponent instance, final String text) {
