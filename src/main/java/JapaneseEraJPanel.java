@@ -1214,7 +1214,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 	@Override
 	public void dateChanged(final DateChangeEvent event) {
 		//
-		if (Objects.equals(event != null ? event.getSource() : null, datePicker)) {
+		if (Objects.equals(getSource(event), datePicker)) {
 			//
 			final String[] ss = StringUtils.split(
 					format(new SimpleDateFormat("GG yy MM dd", getLocaleJapanese()), testAndApply(Objects::nonNull,
@@ -1249,6 +1249,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 		} // if
 			//
+	}
+
+	private static DatePicker getSource(final DateChangeEvent instance) {
+		return instance != null ? instance.getSource() : null;
 	}
 
 	private static void setSelectedItem(final ComboBoxModel<?> instance, final Object item) {
