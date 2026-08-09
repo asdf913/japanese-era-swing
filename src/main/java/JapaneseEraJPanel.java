@@ -102,13 +102,13 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private AbstractButton btnCopyJson, btnExport, cbPrettyJson, btnCopyEmoji, btnCopyHtml = null;
 
-	private TableModel tm = null;
+	private transient TableModel tm = null;
 
 	private DatePicker datePicker = null;
 
 	private Locale localeJapanese = null;
 
-	private ComboBoxModel<String> cbm = null;
+	private transient ComboBoxModel<String> cbm = null;
 
 	private JTextField tfYear, tfMonth, tfDay = null;
 
