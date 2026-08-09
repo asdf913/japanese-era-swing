@@ -561,6 +561,14 @@ class JapaneseEraJPanelTest {
 		//
 		instance.actionPerformed(new ActionEvent(btnCopyEmoji, 0, null));
 		//
+		// btnCopyHtml
+		//
+		final AbstractButton btnCopyHtml = new JButton();
+		//
+		FieldUtils.writeDeclaredField(instance, "btnCopyHtml", btnCopyHtml, true);
+		//
+		instance.actionPerformed(new ActionEvent(btnCopyHtml, 0, null));
+		//
 	}
 
 }

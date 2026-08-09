@@ -98,7 +98,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private static final long serialVersionUID = 1810789541222187125L;
 
-	private AbstractButton btnCopyJson, btnExport, cbPrettyJson, btnCopyEmoji = null;
+	private AbstractButton btnCopyJson, btnExport, cbPrettyJson, btnCopyEmoji, btnCopyHtml = null;
 
 	private TableModel tm = null;
 
@@ -277,6 +277,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		add(jcb);
 		//
 		add(btnCopyEmoji = new JButton("Copy"));
+		//
+		add(btnCopyHtml = new JButton("Copy HTML"));
 		//
 		forEach(map(
 				filter(stream(FieldUtils.getAllFieldsList(getClass())),
@@ -1107,11 +1109,23 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 				final Toolkit toolkit = Toolkit.getDefaultToolkit();
 				//
-				final Clipboard clipboard = toolkit != null && !GraphicsEnvironment.isHeadless()
-						? toolkit.getSystemClipboard()
-						: null;
+				setContents(toolkit != null && !GraphicsEnvironment.isHeadless() ? toolkit.getSystemClipboard() : null,
+						new StringSelection(new String(new char[] { character.charValue() })), null);
 				//
-				setContents(clipboard, new StringSelection(new String(new char[] { character.charValue() })), null);
+			} // if
+				//
+		} else if (Objects.equals(source, btnCopyHtml)) {
+			//
+			final Character character = cast(Character.class, getSelectedItem(jcb));
+			//
+			if (character != null) {
+				//
+				final Toolkit toolkit = Toolkit.getDefaultToolkit();
+				//
+				setContents(toolkit != null && !GraphicsEnvironment.isHeadless() ? toolkit.getSystemClipboard() : null,
+						new StringSelection(
+								String.format("&#x%1$s;", Integer.toHexString((int) character.charValue()))),
+						null);
 				//
 			} // if
 				//
