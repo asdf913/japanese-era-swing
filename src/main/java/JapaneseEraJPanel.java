@@ -824,8 +824,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 	}
 
-	public static void main(final String[] args)
-			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
+	public static void main(final String[] args) throws ParseException {
 		//
 		final JFrame jFrame = !GraphicsEnvironment.isHeadless() ? new JFrame() : null;
 		//
