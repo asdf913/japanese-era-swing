@@ -194,14 +194,10 @@ class JapaneseEraJPanelTest {
 					//
 				} // if
 					//
-			} else if (proxy instanceof TableModel) {
+			} else if (proxy instanceof TableModel && Objects.equals(name, "getColumnCount")) {
 				//
-				if (Objects.equals(name, "getColumnCount")) {
-					//
-					return columnCount;
-					//
-				} // if
-					//
+				return columnCount;
+				//
 			} // if
 				//
 			throw new Throwable(name);
