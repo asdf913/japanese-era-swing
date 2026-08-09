@@ -1034,7 +1034,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 				for (int i = 0; tm != null && i < tm.getRowCount(); i++) {
 					//
-					if ((sheet = ObjectUtils.getIfNull(sheet, () -> wb.createSheet())) == null) {
+					if ((sheet = ObjectUtils.getIfNull(sheet, wb::createSheet)) == null) {
 						//
 						continue;
 						//
