@@ -217,13 +217,14 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 					//
 				} // if
 					//
-				if (IterableUtils.size(eraAbbreviationList = toList(filter(stream(entrySet(eraAbbreviationMap)),
-						x -> Objects.equals(StringUtils.upperCase(Objects.toString(getKey(x))), getKey(entry))))) > 1) {
-					//
-					throw new IllegalStateException();
-					//
-				} // if
-					//
+				testAndRun(IterableUtils.size(eraAbbreviationList = toList(filter(stream(entrySet(eraAbbreviationMap)),
+						x -> Objects.equals(StringUtils.upperCase(Objects.toString(getKey(x))), getKey(entry))))) > 1,
+						() -> {
+							//
+							throw new IllegalStateException();
+							//
+						}); // if
+							//
 				eraAbbreviationEntry = testAndApply(x -> IterableUtils.size(x) == 1, eraAbbreviationList,
 						x -> IterableUtils.get(x, 0), null);
 				//
@@ -353,11 +354,11 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 							c -> Arrays.equals(getParameterTypes(c),
 									new Class<?>[] { String.class, String.class, String.class })));
 			//
-			if (IterableUtils.size(list) > 1) {
+			testAndRun(IterableUtils.size(list) > 1, () -> {
 				//
 				throw new IllegalStateException();
 				//
-			} // if
+			}); // if
 				//
 			try {
 				//
@@ -642,11 +643,11 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			final int size = IterableUtils.size(ms);
 			//
-			if (size > 1) {
+			testAndRun(size > 1, () -> {
 				//
 				throw new IllegalStateException();
 				//
-			} // if
+			}); // if
 				//
 			final Method m = size == 1 ? IterableUtils.get(ms, 0) : null;
 			//
@@ -919,11 +920,11 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			final int size = IterableUtils.size(ms);
 			//
-			if (size > 1) {
+			testAndRun(size > 1, () -> {
 				//
 				throw new IllegalStateException();
 				//
-			} // if
+			}); // if
 				//
 			final Method m = testAndApply(x -> IterableUtils.size(x) == 1, ms, x -> IterableUtils.get(x, 0), null);
 			//
@@ -942,11 +943,11 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 					//
 				} // if
 					//
-				if (index != null) {
+				testAndRun(index != null, () -> {
 					//
 					throw new IllegalStateException();
 					//
-				} // if
+				}); // if
 					//
 				index = Integer.valueOf(i);
 				//
@@ -962,6 +963,12 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		return map;
 		//
+	}
+
+	private static void testAndRun(final boolean condition, final Runnable runnable) {
+		if (condition && runnable != null) {
+			runnable.run();
+		}
 	}
 
 	private static Map<Object, Object> getEraAbbreviationMap(final Instruction[] ins, final Number index,
