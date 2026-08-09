@@ -116,7 +116,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 	@Note("Export")
 	private AbstractButton btnExport = null;
 
-	private AbstractButton cbPrettyJson, btnCopyEmoji, btnCopyHtml = null;
+	@Note("Pretty JSON")
+	private AbstractButton cbPrettyJson = null;
+
+	private AbstractButton btnCopyEmoji, btnCopyHtml = null;
 
 	private transient TableModel tm = null;
 
