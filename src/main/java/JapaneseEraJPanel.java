@@ -12,6 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
@@ -100,7 +104,16 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private static final String VALUE = "value";
 
-	private AbstractButton btnCopyJson, btnExport, cbPrettyJson, btnCopyEmoji, btnCopyHtml = null;
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface Note {
+		String value();
+	}
+
+	@Note("Copy JSON")
+	private AbstractButton btnCopyJson = null;
+
+	private AbstractButton btnExport, cbPrettyJson, btnCopyEmoji, btnCopyHtml = null;
 
 	private transient TableModel tm = null;
 
@@ -110,7 +123,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private transient ComboBoxModel<String> cbm = null;
 
-	private JTextField tfYear, tfMonth, tfDay = null;
+	@Note("Year")
+	private JTextField tfYear = null;
+
+	private JTextField tfMonth, tfDay = null;
 
 	private ObjectMapper objectMapper = null;
 
@@ -572,7 +588,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private static class YearMonthDay {
 
-		private int year, month, day;
+		@Note("Year")
+		private int year;
+
+		private int month, day;
 
 		@Override
 		public String toString() {
