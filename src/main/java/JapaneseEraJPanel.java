@@ -113,7 +113,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 	@Note("Copy JSON")
 	private AbstractButton btnCopyJson = null;
 
-	private AbstractButton btnExport, cbPrettyJson, btnCopyEmoji, btnCopyHtml = null;
+	@Note("Export")
+	private AbstractButton btnExport = null;
+
+	private AbstractButton cbPrettyJson, btnCopyEmoji, btnCopyHtml = null;
 
 	private transient TableModel tm = null;
 
@@ -126,7 +129,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 	@Note("Year")
 	private JTextField tfYear = null;
 
-	private JTextField tfMonth, tfDay = null;
+	@Note("Month")
+	private JTextField tfMonth = null;
+
+	private JTextField tfDay = null;
 
 	private ObjectMapper objectMapper = null;
 
@@ -604,7 +610,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		@Note("Year")
 		private int year;
 
-		private int month, day;
+		@Note("Month")
+		private int month;
+
+		private int day;
 
 		@Override
 		public String toString() {
