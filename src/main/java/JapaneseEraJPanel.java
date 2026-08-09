@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -240,8 +241,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		add(new JLabel("Japnese Date"));
 		//
-		final JComboBox<String> jcb1 = new JComboBox<>(
-				cbm = new DefaultComboBoxModel<>(names != null ? names.toArray(String[]::new) : null));
+		final JComboBox<String> jcb1 = new JComboBox<>(cbm = new DefaultComboBoxModel<>(toArray(names, String[]::new)));
 		//
 		jcb1.setEnabled(false);
 		//
@@ -269,8 +269,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		add(new JLabel("Emoji"));
 		//
-		(jcb = new JComboBox<>(
-				new DefaultComboBoxModel<>(characters != null ? characters.toArray(Character[]::new) : null)))
+		(jcb = new JComboBox<>(new DefaultComboBoxModel<>(toArray(characters, Character[]::new))))
 				.setSelectedItem(null);
 		//
 		jcb.addActionListener(this);
@@ -289,6 +288,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						f -> f != null && JTextComponent.class.isAssignableFrom(f.getType())),
 				f -> cast(JTextComponent.class, Narcissus.getField(this, f))), x -> setEditable(x, false));
 		//
+	}
+
+	private static <T> T[] toArray(final Collection<T> instance, final IntFunction<T[]> generator) {
+		return instance != null ? instance.toArray(generator) : null;
 	}
 
 	private static <T> void setEditable(final JTextComponent instance, final boolean editable) {

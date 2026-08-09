@@ -164,6 +164,10 @@ class JapaneseEraJPanelTest {
 					//
 					return null;
 					//
+				} else if (Objects.equals(name, "toArray")) {
+					//
+					return null;
+					//
 				} // if
 					//
 			} else if (proxy instanceof FailableFunction) {
