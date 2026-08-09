@@ -98,6 +98,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private static final long serialVersionUID = 1810789541222187125L;
 
+	private static final String VALUE = "value";
+
 	private AbstractButton btnCopyJson, btnExport, cbPrettyJson, btnCopyEmoji, btnCopyHtml = null;
 
 	private TableModel tm = null;
@@ -421,8 +423,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		try {
 			//
-			if (instance == null
-					|| Narcissus.getObjectField(instance, String.class.getDeclaredField("value")) == null) {
+			if (instance == null || Narcissus.getObjectField(instance, String.class.getDeclaredField(VALUE)) == null) {
 				//
 				return false;
 				//
@@ -461,9 +462,9 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			if (instance == null
 					|| (str instanceof String
-							&& Narcissus.getObjectField(str, String.class.getDeclaredField("value")) == null)
+							&& Narcissus.getObjectField(str, String.class.getDeclaredField(VALUE)) == null)
 					|| (prefix instanceof String
-							&& Narcissus.getObjectField(prefix, String.class.getDeclaredField("value")) == null)) {
+							&& Narcissus.getObjectField(prefix, String.class.getDeclaredField(VALUE)) == null)) {
 				//
 				return false;
 				//
@@ -542,7 +543,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		try {
 			//
 			if (instance == null || string == null
-					|| Narcissus.getObjectField(string, String.class.getDeclaredField("value")) == null) {
+					|| Narcissus.getObjectField(string, String.class.getDeclaredField(VALUE)) == null) {
 				//
 				return null;
 				//
@@ -718,7 +719,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		try {
 			//
 			if (instance == null || name == null
-					|| Narcissus.getObjectField(name, String.class.getDeclaredField("value")) == null) {
+					|| Narcissus.getObjectField(name, String.class.getDeclaredField(VALUE)) == null) {
 				//
 				return null;
 				//
@@ -764,7 +765,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		try {
 			//
 			if (instance == null || (instance instanceof String
-					&& Narcissus.getObjectField(instance, String.class.getDeclaredField("value")) == null)) {
+					&& Narcissus.getObjectField(instance, String.class.getDeclaredField(VALUE)) == null)) {
 				//
 				return null;
 				//
@@ -1282,8 +1283,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		try {
 			//
-			if (instance == null || (text != null
-					&& Narcissus.getObjectField(text, String.class.getDeclaredField("value")) == null)) {
+			if (instance == null
+					|| (text != null && Narcissus.getObjectField(text, String.class.getDeclaredField(VALUE)) == null)) {
 				//
 				return;
 				//
