@@ -322,7 +322,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		return instance != null ? instance.toArray(generator) : null;
 	}
 
-	private static <T> void setEditable(final JTextComponent instance, final boolean editable) {
+	private static void setEditable(final JTextComponent instance, final boolean editable) {
 		if (instance != null) {
 			instance.setEditable(editable);
 		}
