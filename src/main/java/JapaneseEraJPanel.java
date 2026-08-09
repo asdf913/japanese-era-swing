@@ -282,14 +282,18 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		forEach(map(
 				filter(stream(FieldUtils.getAllFieldsList(getClass())),
-						f -> f != null && AbstractButton.class.isAssignableFrom(f.getType())),
+						f -> AbstractButton.class.isAssignableFrom(getType(f))),
 				f -> cast(AbstractButton.class, Narcissus.getField(this, f))), x -> addActionListener(x, this));
 		//
 		forEach(map(
 				filter(stream(FieldUtils.getAllFieldsList(getClass())),
-						f -> f != null && JTextComponent.class.isAssignableFrom(f.getType())),
+						f -> JTextComponent.class.isAssignableFrom(getType(f))),
 				f -> cast(JTextComponent.class, Narcissus.getField(this, f))), x -> setEditable(x, false));
 		//
+	}
+
+	private static Class<?> getType(final Field instance) {
+		return instance != null ? instance.getType() : null;
 	}
 
 	private static <T> T[] toArray(final Collection<T> instance, final IntFunction<T[]> generator) {
