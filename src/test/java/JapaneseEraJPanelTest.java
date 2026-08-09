@@ -86,11 +86,7 @@ class JapaneseEraJPanelTest {
 				//
 			if (proxy instanceof Iterable) {
 				//
-				if (Objects.equals(name, "iterator")) {
-					//
-					return null;
-					//
-				} else if (Objects.equals(name, "spliterator")) {
+				if (contains(Arrays.asList("iterator", "spliterator"), name)) {
 					//
 					return null;
 					//
@@ -136,11 +132,7 @@ class JapaneseEraJPanelTest {
 					//
 			} else if (proxy instanceof Entry) {
 				//
-				if (Objects.equals(name, "getValue")) {
-					//
-					return null;
-					//
-				} else if (Objects.equals(name, "getKey")) {
+				if (contains(Arrays.asList("getValue", "getKey"), name)) {
 					//
 					return null;
 					//
