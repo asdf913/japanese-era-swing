@@ -414,6 +414,19 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 					//
 			} // for
 				//
+			return getCharacter2(entries, commonPrefix, entryKey);
+			//
+		} // if
+			//
+		return null;
+		//
+	}
+
+	private static Character getCharacter2(final Iterable<Entry<String, Character>> entries, final String commonPrefix,
+			final String entryKey) {
+		//
+		if (iterator(entries) != null) {
+			//
 			for (final Entry<String, Character> entry2 : entries) {
 				//
 				if (entry2 == null) {
