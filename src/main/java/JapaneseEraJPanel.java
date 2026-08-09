@@ -651,73 +651,82 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 			final Method m = size == 1 ? IterableUtils.get(ms, 0) : null;
 			//
-			final Instruction[] ins = m != null ? getInstructions(new MethodGen(m, null, null).getInstructionList())
-					: null;
+			map = getJapaneseEraSinceDates(
+					m != null ? getInstructions(new MethodGen(m, null, null).getInstructionList()) : null, m);
 			//
-			Instruction in = null;
-			//
-			SIPUSH sipush = null;
-			//
-			final int length = ins != null ? ins.length : 0;
-			//
-			Number year, month, day = null;
-			//
-			YearMonthDay yearMonthDay = null;
-			//
-			PUTSTATIC putStatic = null;
-			//
-			ConstantPoolGen cpg = null;
-			//
-			for (int i = 0; ins != null && i < length; i++) {
-				//
-				if ((in = ArrayUtils.get(ins, i)) == null) {
-					//
-					continue;
-					//
-				} // if
-					//
-				if ((sipush = cast(SIPUSH.class, in)) != null && length > i + 5) {
-					//
-					year = getValue(sipush);
-					//
-					month = getNumberValue(ArrayUtils.get(ins, i + 1));
-					//
-					day = getNumberValue(ArrayUtils.get(ins, i + 2));
-					//
-					if ((putStatic = cast(PUTSTATIC.class, ArrayUtils.get(ins, i + 5))) != null) {
-						//
-						if (year == null || month == null || day == null) {
-							//
-							continue;
-							//
-						} // if
-							//
-						(yearMonthDay = new YearMonthDay()).year = year.intValue();
-						//
-						yearMonthDay.month = month.intValue();
-						//
-						yearMonthDay.day = day.intValue();
-						//
-						if (cpg == null && m != null) {
-							//
-							cpg = new ConstantPoolGen(m.getConstantPool());
-							//
-						} // if
-							//
-						put(map = ObjectUtils.getIfNull(map, LinkedHashMap::new), putStatic.getFieldName(cpg),
-								yearMonthDay);
-						//
-					} // if
-						//
-				} // if
-					//
-			} // for
-				//
 		} catch (final IOException e) {
 			//
 			throw new RuntimeException(e);
 			//
 		} // try
+			//
+		return map;
+		//
+	}
+
+	private static Map<String, YearMonthDay> getJapaneseEraSinceDates(final Instruction[] ins,
+			final FieldOrMethod fom) {
+		//
+		Map<String, YearMonthDay> map = null;
+		//
+		final int length = ins != null ? ins.length : 0;
+		//
+		Instruction in = null;
+		//
+		SIPUSH sipush = null;
+		//
+		Number year, month, day = null;
+		//
+		YearMonthDay yearMonthDay = null;
+		//
+		PUTSTATIC putStatic = null;
+		//
+		ConstantPoolGen cpg = null;
+		//
+		for (int i = 0; ins != null && i < length; i++) {
+			//
+			if ((in = ArrayUtils.get(ins, i)) == null) {
+				//
+				continue;
+				//
+			} // if
+				//
+			if ((sipush = cast(SIPUSH.class, in)) != null && length > i + 5) {
+				//
+				year = getValue(sipush);
+				//
+				month = getNumberValue(ArrayUtils.get(ins, i + 1));
+				//
+				day = getNumberValue(ArrayUtils.get(ins, i + 2));
+				//
+				if ((putStatic = cast(PUTSTATIC.class, ArrayUtils.get(ins, i + 5))) != null) {
+					//
+					if (year == null || month == null || day == null) {
+						//
+						continue;
+						//
+					} // if
+						//
+					(yearMonthDay = new YearMonthDay()).year = year.intValue();
+					//
+					yearMonthDay.month = month.intValue();
+					//
+					yearMonthDay.day = day.intValue();
+					//
+					if (cpg == null && fom != null) {
+						//
+						cpg = new ConstantPoolGen(fom.getConstantPool());
+						//
+					} // if
+						//
+					put(map = ObjectUtils.getIfNull(map, LinkedHashMap::new), putStatic.getFieldName(cpg),
+							yearMonthDay);
+					//
+				} // if
+					//
+			} // if
+				//
+		} // for
 			//
 		return map;
 		//
