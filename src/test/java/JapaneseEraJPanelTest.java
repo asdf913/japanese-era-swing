@@ -357,7 +357,7 @@ class JapaneseEraJPanelTest {
 			//
 			if ((m = ArrayUtils.get(ms, i)) == null || m.isSynthetic()
 					|| (parameterTypes = m.getParameterTypes()) == null
-					|| Boolean.logicalAnd(Objects.equals(name = getName(m), "newInstance"),
+					|| Boolean.logicalAnd(Objects.equals(getName(m), "newInstance"),
 							Arrays.equals(parameterTypes, new Class<?>[] { Constructor.class, Object[].class }))) {
 				//
 				continue;
