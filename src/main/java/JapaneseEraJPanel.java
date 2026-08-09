@@ -116,15 +116,13 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private JComboBox<Character> jcb = null;
 
-	private JapaneseEraJPanel()
-			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
+	private JapaneseEraJPanel() throws ParseException {
 		//
 		init();
 		//
 	}
 
-	private void init()
-			throws InstantiationException, IllegalAccessException, InvocationTargetException, ParseException {
+	private void init() throws ParseException {
 		//
 		setLayout(new MigLayout());
 		//
