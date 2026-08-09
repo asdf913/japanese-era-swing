@@ -944,41 +944,46 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 			} // for
 				//
-			ConstantPoolGen cpg = null;
+			map = getEraAbbreviationMap(ins, index, m != null ? new ConstantPoolGen(m.getConstantPool()) : null);
 			//
-			Object key = null, value = null;
-			//
-			for (int i = 0; ins != null && i < Math.max(length, intValue(index, 0)); i++) {
-				//
-				if (cpg == null) {
-					//
-					cpg = new ConstantPoolGen(m.getConstantPool());
-					//
-				} // if
-					//
-				if (ArrayUtils.get(ins, i) instanceof LDC ldc && ldc != null) {
-					//
-					if (i > 0 && ArrayUtils.get(ins, i - 1) instanceof LDC) {
-						//
-						value = ldc.getValue(cpg);
-						//
-					} else {
-						//
-						key = ldc.getValue(cpg);
-						//
-					} // if
-						//
-					put(map = ObjectUtils.getIfNull(map, LinkedHashMap::new), key, value);
-					//
-				} // if
-					//
-			} // for
-				//
 		} catch (final IOException e) {
 			//
 			throw new RuntimeException(e);
 			//
 		} // try
+			//
+		return map;
+		//
+	}
+
+	private static Map<Object, Object> getEraAbbreviationMap(final Instruction[] ins, final Number index,
+			final ConstantPoolGen cpg) {
+		//
+		final int length = ins != null ? ins.length : 0;
+		//
+		Map<Object, Object> map = null;
+		//
+		Object key = null, value = null;
+		//
+		for (int i = 0; ins != null && i < Math.max(length, intValue(index, 0)); i++) {
+			//
+			if (ArrayUtils.get(ins, i) instanceof LDC ldc && ldc != null) {
+				//
+				if (i > 0 && ArrayUtils.get(ins, i - 1) instanceof LDC) {
+					//
+					value = ldc.getValue(cpg);
+					//
+				} else {
+					//
+					key = ldc.getValue(cpg);
+					//
+				} // if
+					//
+				put(map = ObjectUtils.getIfNull(map, LinkedHashMap::new), key, value);
+				//
+			} // if
+				//
+		} // for
 			//
 		return map;
 		//
