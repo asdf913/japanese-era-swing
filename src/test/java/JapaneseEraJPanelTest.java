@@ -84,14 +84,10 @@ class JapaneseEraJPanelTest {
 				//
 			} // if
 				//
-			if (proxy instanceof Iterable) {
+			if (proxy instanceof Iterable && contains(Arrays.asList("iterator", "spliterator"), name)) {
 				//
-				if (contains(Arrays.asList("iterator", "spliterator"), name)) {
-					//
-					return null;
-					//
-				} // if
-					//
+				return null;
+				//
 			} // if
 				//
 			if (proxy instanceof Map) {
