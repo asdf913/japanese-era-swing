@@ -1013,44 +1013,11 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		if (Objects.equals(source, btnCopyJson)) {
 			//
-			final int columnCount = getColumnCount(tm);
+			final List<Map<?, ?>> list = getMapList(tm,
+					Map.of(Integer.valueOf(0), "englishName", Integer.valueOf(1), "abbreviation", Integer.valueOf(2),
+							"japaneseName", Integer.valueOf(3), "emoji", Integer.valueOf(4), "year", Integer.valueOf(5),
+							"month", Integer.valueOf(6), "day"));
 			//
-			List<Map<?, ?>> list = null;
-			//
-			Map<Object, Object> map = null;
-			//
-			Object value = null;
-			//
-			final Map<Integer, String> fieldNames = Map.of(Integer.valueOf(0), "englishName", Integer.valueOf(1),
-					"abbreviation", Integer.valueOf(2), "japaneseName", Integer.valueOf(3), "emoji", Integer.valueOf(4),
-					"year", Integer.valueOf(5), "month", Integer.valueOf(6), "day");
-			//
-			for (int i = 0; i < getRowCount(tm); i++) {
-				//
-				for (int j = 0; j < columnCount; j++) {
-					//
-					value = getValueAt(tm, i, j);
-					//
-					if (j == 0) {
-						//
-						add(list = ObjectUtils.getIfNull(list, ArrayList::new), map = new LinkedHashMap<>());
-						//
-					} // if
-						//
-					if (containsKey(fieldNames, Integer.valueOf(i))) {
-						//
-						put(map, get(fieldNames, Integer.valueOf(i)), value);
-						//
-					} else {
-						//
-						throw new IllegalStateException();
-						//
-					} // if
-						//
-				} // for
-					//
-			} // for
-				//
 			final Clipboard clipboard = getSystemClipboard(Toolkit.getDefaultToolkit());
 			//
 			objectMapper = ObjectUtils.getIfNull(objectMapper, ObjectMapper::new);
@@ -1108,6 +1075,46 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		} // if
 			//
 		actionPerformed(this, source);
+		//
+	}
+
+	private static List<Map<?, ?>> getMapList(final TableModel tm, final Map<Integer, String> fieldNames) {
+		//
+		final int columnCount = getColumnCount(tm);
+		//
+		List<Map<?, ?>> list = null;
+		//
+		Map<Object, Object> map = null;
+		//
+		Object value = null;
+		//
+		for (int i = 0; i < getRowCount(tm); i++) {
+			//
+			for (int j = 0; j < columnCount; j++) {
+				//
+				value = getValueAt(tm, i, j);
+				//
+				if (j == 0) {
+					//
+					add(list = ObjectUtils.getIfNull(list, ArrayList::new), map = new LinkedHashMap<>());
+					//
+				} // if
+					//
+				if (containsKey(fieldNames, Integer.valueOf(i))) {
+					//
+					put(map, get(fieldNames, Integer.valueOf(i)), value);
+					//
+				} else {
+					//
+					throw new IllegalStateException();
+					//
+				} // if
+					//
+			} // for
+				//
+		} // for
+			//
+		return list;
 		//
 	}
 
