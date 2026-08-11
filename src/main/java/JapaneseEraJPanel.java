@@ -675,8 +675,6 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		final int length = ins != null ? ins.length : 0;
 		//
-		Instruction in = null;
-		//
 		SIPUSH sipush = null;
 		//
 		Number year, month, day = null;
@@ -687,13 +685,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		for (int i = 0; ins != null && i < length; i++) {
 			//
-			if ((in = ArrayUtils.get(ins, i)) == null) {
-				//
-				continue;
-				//
-			} // if
-				//
-			if ((sipush = cast(SIPUSH.class, in)) != null && length > i + 5) {
+			if ((sipush = cast(SIPUSH.class, ArrayUtils.get(ins, i))) != null && length > i + 5) {
 				//
 				year = getValue(sipush);
 				//
