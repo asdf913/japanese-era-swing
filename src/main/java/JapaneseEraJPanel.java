@@ -655,7 +655,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			final Method m = size == 1 ? IterableUtils.get(ms, 0) : null;
 			//
 			map = getJapaneseEraSinceDates(
-					m != null ? getInstructions(new MethodGen(m, null, null).getInstructionList()) : null, m,
+					m != null ? getInstructions(new MethodGen(m, null, null).getInstructionList()) : null,
 					m != null ? new ConstantPoolGen(m.getConstantPool()) : null);
 			//
 		} catch (final IOException e) {
@@ -668,7 +668,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 	}
 
-	private static Map<String, YearMonthDay> getJapaneseEraSinceDates(final Instruction[] ins, final FieldOrMethod fom,
+	private static Map<String, YearMonthDay> getJapaneseEraSinceDates(final Instruction[] ins,
 			final ConstantPoolGen cpg) {
 		//
 		Map<String, YearMonthDay> map = null;
