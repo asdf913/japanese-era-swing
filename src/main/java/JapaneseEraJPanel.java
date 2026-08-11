@@ -1160,19 +1160,6 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 			return;
 			//
-		} else if (Objects.equals(source, btnCopyEmoji)) {
-			//
-			final Character character = cast(Character.class, getSelectedItem(jcb));
-			//
-			if (character != null) {
-				//
-				setContents(getSystemClipboard(Toolkit.getDefaultToolkit()),
-						new StringSelection(new String(new char[] { character.charValue() })), null);
-				//
-			} // if
-				//
-			return;
-			//
 		} // if
 			//
 		actionPerformed(this, source);
@@ -1187,7 +1174,20 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		} // if
 			//
-		if (Objects.equals(source, instance.btnCopyHtml)) {
+		if (Objects.equals(source, instance.btnCopyEmoji)) {
+			//
+			final Character character = cast(Character.class, getSelectedItem(instance.jcb));
+			//
+			if (character != null) {
+				//
+				setContents(getSystemClipboard(Toolkit.getDefaultToolkit()),
+						new StringSelection(new String(new char[] { character.charValue() })), null);
+				//
+			} // if
+				//
+			return;
+			//
+		} else if (Objects.equals(source, instance.btnCopyHtml)) {
 			//
 			final Character character = cast(Character.class, getSelectedItem(instance.jcb));
 			//
