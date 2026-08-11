@@ -1162,9 +1162,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			if (character != null) {
 				//
-				final Toolkit toolkit = Toolkit.getDefaultToolkit();
-				//
-				setContents(toolkit != null && !GraphicsEnvironment.isHeadless() ? toolkit.getSystemClipboard() : null,
+				setContents(getSystemClipboard(Toolkit.getDefaultToolkit()),
 						new StringSelection(new String(new char[] { character.charValue() })), null);
 				//
 			} // if
@@ -1175,17 +1173,19 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			if (character != null) {
 				//
-				final Toolkit toolkit = Toolkit.getDefaultToolkit();
-				//
-				setContents(toolkit != null && !GraphicsEnvironment.isHeadless() ? toolkit.getSystemClipboard() : null,
-						new StringSelection(
-								String.format("&#x%1$s;", Integer.toHexString((int) character.charValue()))),
-						null);
+				setContents(getSystemClipboard(Toolkit.getDefaultToolkit()), new StringSelection(
+						String.format("&#x%1$s;", Integer.toHexString((int) character.charValue()))), null);
 				//
 			} // if
 				//
 		} // if
 			//
+	}
+
+	private static Clipboard getSystemClipboard(final Toolkit instance) {
+		//
+		return instance != null && !GraphicsEnvironment.isHeadless() ? instance.getSystemClipboard() : null;
+		//
 	}
 
 	private static Object getSelectedItem(final JComboBox<?> instance) {

@@ -1,3 +1,4 @@
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -408,6 +409,10 @@ class JapaneseEraJPanelTest {
 				} else if (Objects.equals(parameterType, Instruction.class)) {
 					//
 					add(collection, new NOP());
+					//
+				} else if (Objects.equals(parameterType, Toolkit.class)) {
+					//
+					add(collection, Narcissus.allocateInstance(Class.forName("sun.awt.HeadlessToolkit")));
 					//
 				} else if (Objects.equals(parameterType, Executable.class)) {
 					//
