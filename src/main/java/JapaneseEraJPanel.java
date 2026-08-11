@@ -1072,6 +1072,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 			} // if
 				//
+			return;
+			//
 		} else if (Objects.equals(source, btnExport)) {
 			//
 			try (final Workbook wb = new XSSFWorkbook();
@@ -1156,6 +1158,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 			} // try
 				//
+			return;
+			//
 		} else if (Objects.equals(source, btnCopyEmoji)) {
 			//
 			final Character character = cast(Character.class, getSelectedItem(jcb));
@@ -1167,9 +1171,25 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 			} // if
 				//
-		} else if (Objects.equals(source, btnCopyHtml)) {
+			return;
 			//
-			final Character character = cast(Character.class, getSelectedItem(jcb));
+		} // if
+			//
+		actionPerformed(this, source);
+		//
+	}
+
+	private static void actionPerformed(final JapaneseEraJPanel instance, final Object source) {
+		//
+		if (instance == null) {
+			//
+			return;
+			//
+		} // if
+			//
+		if (Objects.equals(source, instance.btnCopyHtml)) {
+			//
+			final Character character = cast(Character.class, getSelectedItem(instance.jcb));
 			//
 			if (character != null) {
 				//
