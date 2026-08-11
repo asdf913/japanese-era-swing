@@ -1087,12 +1087,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						//
 					} // if
 						//
-					if (sheet.getPhysicalNumberOfRows() == 0) {
-						//
-						addColumNameRow(sheet, tm);
-						//
-					} // if
-						//
+					testAndAccept(x -> getPhysicalNumberOfRows(x) == 0, sheet, x -> addColumNameRow(x, tm));
+					//
 					row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 					//
 					for (int j = 0; j < columnCount; j++) {
@@ -1119,9 +1115,19 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 	}
 
+	private static int getPhysicalNumberOfRows(final Sheet instance) {
+		return instance != null ? instance.getPhysicalNumberOfRows() : 0;
+	}
+
+	private static <T> void testAndAccept(final Predicate<T> predicate, final T value, final Consumer<T> consumer) {
+		if (test(predicate, value) && consumer != null) {
+			consumer.accept(value);
+		}
+	}
+
 	private static void addColumNameRow(final Sheet sheet, final TableModel tm) {
 		//
-		final Row row = sheet != null ? sheet.createRow(sheet.getPhysicalNumberOfRows()) : null;
+		final Row row = sheet != null ? sheet.createRow(getPhysicalNumberOfRows(sheet)) : null;
 		//
 		for (int j = 0; j < getColumnCount(tm); j++) {
 			//
