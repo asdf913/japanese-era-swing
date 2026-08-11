@@ -81,6 +81,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.FailableFunction;
+import org.apache.commons.lang3.function.FailableRunnable;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -839,12 +840,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			pack(jFrame);
 			//
-			if (!isTestMode()) {
-				//
-				jFrame.setVisible(true);
-				//
-			} // if
-				//
+			testAndRun(!isTestMode(), () -> jFrame.setVisible(true));
+			//
 		} // if
 			//
 	}
@@ -965,7 +962,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 	}
 
-	private static void testAndRun(final boolean condition, final Runnable runnable) {
+	private static <T extends Throwable> void testAndRun(final boolean condition, final FailableRunnable<T> runnable)
+			throws T {
 		if (condition && runnable != null) {
 			runnable.run();
 		}
@@ -1146,12 +1144,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						//
 				} // for
 					//
-				if (!isTestMode()) {
-					//
-					wb.write(os);
-					//
-				} // if
-					//
+				testAndRun(!isTestMode(), () -> wb.write(os));
+				//
 			} catch (final IOException e) {
 				//
 				throw new RuntimeException(e);
