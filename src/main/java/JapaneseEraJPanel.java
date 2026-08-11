@@ -655,7 +655,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			final Method m = size == 1 ? IterableUtils.get(ms, 0) : null;
 			//
 			map = getJapaneseEraSinceDates(
-					m != null ? getInstructions(new MethodGen(m, null, null).getInstructionList()) : null, m);
+					m != null ? getInstructions(new MethodGen(m, null, null).getInstructionList()) : null, m,
+					m != null ? new ConstantPoolGen(m.getConstantPool()) : null);
 			//
 		} catch (final IOException e) {
 			//
@@ -667,8 +668,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 	}
 
-	private static Map<String, YearMonthDay> getJapaneseEraSinceDates(final Instruction[] ins,
-			final FieldOrMethod fom) {
+	private static Map<String, YearMonthDay> getJapaneseEraSinceDates(final Instruction[] ins, final FieldOrMethod fom,
+			final ConstantPoolGen cpg) {
 		//
 		Map<String, YearMonthDay> map = null;
 		//
@@ -683,8 +684,6 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		YearMonthDay yearMonthDay = null;
 		//
 		PUTSTATIC putStatic = null;
-		//
-		ConstantPoolGen cpg = null;
 		//
 		for (int i = 0; ins != null && i < length; i++) {
 			//
@@ -716,12 +715,6 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 					//
 					yearMonthDay.day = day.intValue();
 					//
-					if (cpg == null && fom != null) {
-						//
-						cpg = new ConstantPoolGen(fom.getConstantPool());
-						//
-					} // if
-						//
 					put(map = ObjectUtils.getIfNull(map, LinkedHashMap::new), putStatic.getFieldName(cpg),
 							yearMonthDay);
 					//
