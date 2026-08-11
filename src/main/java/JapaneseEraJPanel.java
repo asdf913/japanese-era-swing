@@ -1081,8 +1081,6 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 				Row row = null;
 				//
-				Cell cell = null;
-				//
 				final int columnCount = getColumnCount(tm);
 				//
 				for (int i = 0; tm != null && i < tm.getRowCount(); i++) {
@@ -1093,32 +1091,23 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						//
 					} // if
 						//
-					if (sheet.getPhysicalNumberOfRows() == 0
-							&& (row = sheet.createRow(sheet.getPhysicalNumberOfRows())) != null) {
+					if (sheet.getPhysicalNumberOfRows() == 0) {
+						//
+						row = sheet.createRow(sheet.getPhysicalNumberOfRows());
 						//
 						for (int j = 0; j < columnCount; j++) {
 							//
-							if ((cell = row.createCell(row.getPhysicalNumberOfCells())) == null) {
-								//
-								continue;
-								//
-							} // if
-								//
-							cell.setCellValue(tm.getColumnName(j));
+							setCellValue(createCell(row, getPhysicalNumberOfCells(row)), tm.getColumnName(j));
 							//
 						} // for
 							//
 					} // if
 						//
-					if ((row = sheet.createRow(sheet.getPhysicalNumberOfRows())) == null) {
-						//
-						continue;
-						//
-					} // if
-						//
+					row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+					//
 					for (int j = 0; j < columnCount; j++) {
 						//
-						setCellValue(row.createCell(row.getPhysicalNumberOfCells()), tm.getValueAt(i, j));
+						setCellValue(createCell(row, getPhysicalNumberOfCells(row)), tm.getValueAt(i, j));
 						//
 					} // for
 						//
@@ -1138,6 +1127,14 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		actionPerformed(this, source);
 		//
+	}
+
+	private static int getPhysicalNumberOfCells(final Row instance) {
+		return instance != null ? instance.getPhysicalNumberOfCells() : 0;
+	}
+
+	private static Cell createCell(final Row instance, final int column) {
+		return instance != null ? instance.createCell(column) : null;
 	}
 
 	private static void setCellValue(final Cell instance, final Object value) {

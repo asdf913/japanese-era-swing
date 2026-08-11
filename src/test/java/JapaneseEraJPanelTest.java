@@ -38,6 +38,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -68,7 +69,7 @@ class JapaneseEraJPanelTest {
 
 		private Boolean put, test, add, containsKey;
 
-		private Integer length, columnCount;
+		private Integer length, columnCount, physicalNumberOfCells;
 
 		@Override
 		public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
@@ -190,6 +191,18 @@ class JapaneseEraJPanelTest {
 				//
 				return columnCount;
 				//
+			} else if (proxy instanceof Row) {
+				//
+				if (Objects.equals(name, "getPhysicalNumberOfCells")) {
+					//
+					return physicalNumberOfCells;
+					//
+				} else if (Objects.equals(name, "createCell")) {
+					//
+					return null;
+					//
+				} // if
+					//
 			} // if
 				//
 			throw new Throwable(name);
@@ -437,7 +450,7 @@ class JapaneseEraJPanelTest {
 						//
 						ih.put = ih.test = ih.add = ih.containsKey = Boolean.TRUE;
 						//
-						ih.length = ih.columnCount = Integer.valueOf(0);
+						ih.length = ih.columnCount = ih.physicalNumberOfCells = Integer.valueOf(0);
 						//
 					} // if
 						//
