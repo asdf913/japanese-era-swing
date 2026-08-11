@@ -1039,7 +1039,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						//
 					if (containsKey(fieldNames, Integer.valueOf(i))) {
 						//
-						put(map, get(fieldNames, Integer.valueOf(j)), value);
+						put(map, get(fieldNames, Integer.valueOf(i)), value);
 						//
 					} else {
 						//
