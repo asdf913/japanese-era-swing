@@ -1051,11 +1051,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 					//
 			} // for
 				//
-			final Toolkit toolkit = Toolkit.getDefaultToolkit();
-			//
-			final Clipboard clipboard = toolkit != null && !GraphicsEnvironment.isHeadless()
-					? toolkit.getSystemClipboard()
-					: null;
+			final Clipboard clipboard = getSystemClipboard(Toolkit.getDefaultToolkit());
 			//
 			if ((objectMapper = ObjectUtils.getIfNull(objectMapper, ObjectMapper::new)) != null
 					&& isSelected(cbPrettyJson)) {
