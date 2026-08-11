@@ -70,7 +70,7 @@ class JapaneseEraJPanelTest {
 
 		private Boolean put, test, add, containsKey;
 
-		private Integer length, columnCount, physicalNumberOfCells, physicalNumberOfRows;
+		private Integer length, columnCount, rowCount, physicalNumberOfCells, physicalNumberOfRows;
 
 		@Override
 		public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
@@ -194,7 +194,15 @@ class JapaneseEraJPanelTest {
 					//
 					return columnCount;
 					//
+				} else if (Objects.equals(name, "getRowCount")) {
+					//
+					return rowCount;
+					//
 				} else if (Objects.equals(name, "getColumnName")) {
+					//
+					return null;
+					//
+				} else if (Objects.equals(name, "getValueAt")) {
 					//
 					return null;
 					//
@@ -471,7 +479,7 @@ class JapaneseEraJPanelTest {
 						//
 						ih.put = ih.test = ih.add = ih.containsKey = Boolean.TRUE;
 						//
-						ih.length = ih.columnCount = ih.physicalNumberOfCells = ih.physicalNumberOfRows = Integer
+						ih.length = ih.columnCount = ih.rowCount = ih.physicalNumberOfCells = ih.physicalNumberOfRows = Integer
 								.valueOf(0);
 						//
 					} // if

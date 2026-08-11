@@ -253,7 +253,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		} // if
 			//
 		jsp.setPreferredSize(new Dimension((int) jsp.getPreferredSize().getWidth(),
-				(dtm.getRowCount() + 1) * (jTable.getRowHeight() + 2)));
+				(getRowCount(dtm) + 1) * (jTable.getRowHeight() + 2)));
 		//
 		add(new JLabel());
 		//
@@ -1025,11 +1025,11 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 					"abbreviation", Integer.valueOf(2), "japaneseName", Integer.valueOf(3), "emoji", Integer.valueOf(4),
 					"year", Integer.valueOf(5), "month", Integer.valueOf(6), "day");
 			//
-			for (int i = 0; tm != null && i < tm.getRowCount(); i++) {
+			for (int i = 0; i < getRowCount(tm); i++) {
 				//
 				for (int j = 0; j < columnCount; j++) {
 					//
-					value = tm.getValueAt(i, j);
+					value = getValueAt(tm, i, j);
 					//
 					if (j == 0) {
 						//
@@ -1079,7 +1079,7 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 				final int columnCount = getColumnCount(tm);
 				//
-				for (int i = 0; tm != null && i < tm.getRowCount(); i++) {
+				for (int i = 0; i < getRowCount(tm); i++) {
 					//
 					if ((sheet = ObjectUtils.getIfNull(sheet, wb::createSheet)) == null) {
 						//
@@ -1089,11 +1089,11 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						//
 					testAndAccept(x -> getPhysicalNumberOfRows(x) == 0, sheet, x -> addColumNameRow(x, tm));
 					//
-					row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+					row = sheet.createRow(getPhysicalNumberOfRows(sheet));
 					//
 					for (int j = 0; j < columnCount; j++) {
 						//
-						setCellValue(createCell(row, getPhysicalNumberOfCells(row)), tm.getValueAt(i, j));
+						setCellValue(createCell(row, getPhysicalNumberOfCells(row)), getValueAt(tm, i, j));
 						//
 					} // for
 						//
@@ -1113,6 +1113,14 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		actionPerformed(this, source);
 		//
+	}
+
+	private static int getRowCount(final TableModel instance) {
+		return instance != null ? instance.getRowCount() : 0;
+	}
+
+	private static Object getValueAt(final TableModel instance, final int rowIndex, final int columnIndex) {
+		return instance != null ? instance.getValueAt(rowIndex, columnIndex) : null;
 	}
 
 	private static int getPhysicalNumberOfRows(final Sheet instance) {
