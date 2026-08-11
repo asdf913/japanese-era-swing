@@ -1180,8 +1180,6 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 			} // if
 				//
-			return;
-			//
 		} else if (Objects.equals(source, instance.btnCopyHtml)) {
 			//
 			final Character character = cast(Character.class, getSelectedItem(instance.jcb));
