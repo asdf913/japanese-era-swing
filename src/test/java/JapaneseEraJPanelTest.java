@@ -39,6 +39,7 @@ import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -69,7 +70,7 @@ class JapaneseEraJPanelTest {
 
 		private Boolean put, test, add, containsKey;
 
-		private Integer length, columnCount, physicalNumberOfCells;
+		private Integer length, columnCount, physicalNumberOfCells, physicalNumberOfRows;
 
 		@Override
 		public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
@@ -187,10 +188,18 @@ class JapaneseEraJPanelTest {
 					//
 				} // if
 					//
-			} else if (proxy instanceof TableModel && Objects.equals(name, "getColumnCount")) {
+			} else if (proxy instanceof TableModel) {
 				//
-				return columnCount;
-				//
+				if (Objects.equals(name, "getColumnCount")) {
+					//
+					return columnCount;
+					//
+				} else if (Objects.equals(name, "getColumnName")) {
+					//
+					return null;
+					//
+				} // if
+					//
 			} else if (proxy instanceof Row) {
 				//
 				if (Objects.equals(name, "getPhysicalNumberOfCells")) {
@@ -198,6 +207,18 @@ class JapaneseEraJPanelTest {
 					return physicalNumberOfCells;
 					//
 				} else if (Objects.equals(name, "createCell")) {
+					//
+					return null;
+					//
+				} // if
+					//
+			} else if (proxy instanceof Sheet) {
+				//
+				if (Objects.equals(name, "getPhysicalNumberOfRows")) {
+					//
+					return physicalNumberOfRows;
+					//
+				} else if (Objects.equals(name, "createRow")) {
 					//
 					return null;
 					//
@@ -450,7 +471,8 @@ class JapaneseEraJPanelTest {
 						//
 						ih.put = ih.test = ih.add = ih.containsKey = Boolean.TRUE;
 						//
-						ih.length = ih.columnCount = ih.physicalNumberOfCells = Integer.valueOf(0);
+						ih.length = ih.columnCount = ih.physicalNumberOfCells = ih.physicalNumberOfRows = Integer
+								.valueOf(0);
 						//
 					} // if
 						//

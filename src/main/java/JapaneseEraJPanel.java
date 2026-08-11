@@ -1089,14 +1089,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						//
 					if (sheet.getPhysicalNumberOfRows() == 0) {
 						//
-						row = sheet.createRow(sheet.getPhysicalNumberOfRows());
+						addColumNameRow(sheet, tm);
 						//
-						for (int j = 0; j < columnCount; j++) {
-							//
-							setCellValue(createCell(row, getPhysicalNumberOfCells(row)), tm.getColumnName(j));
-							//
-						} // for
-							//
 					} // if
 						//
 					row = sheet.createRow(sheet.getPhysicalNumberOfRows());
@@ -1123,6 +1117,18 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		actionPerformed(this, source);
 		//
+	}
+
+	private static void addColumNameRow(final Sheet sheet, final TableModel tm) {
+		//
+		final Row row = sheet != null ? sheet.createRow(sheet.getPhysicalNumberOfRows()) : null;
+		//
+		for (int j = 0; j < getColumnCount(tm); j++) {
+			//
+			setCellValue(createCell(row, getPhysicalNumberOfCells(row)), getColumnName(tm, j));
+			//
+		} // for
+			//
 	}
 
 	private static int getPhysicalNumberOfCells(final Row instance) {
@@ -1272,6 +1278,10 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 
 	private static int getColumnCount(final TableModel instance) {
 		return instance != null ? instance.getColumnCount() : 0;
+	}
+
+	private static String getColumnName(final TableModel instance, final int columnIndex) {
+		return instance != null ? instance.getColumnName(columnIndex) : null;
 	}
 
 	private static <V> V get(final Map<?, V> instance, final Object key) {
