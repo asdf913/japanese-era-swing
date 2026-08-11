@@ -1053,11 +1053,12 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 			final Clipboard clipboard = getSystemClipboard(Toolkit.getDefaultToolkit());
 			//
-			if ((objectMapper = ObjectUtils.getIfNull(objectMapper, ObjectMapper::new)) != null
-					&& isSelected(cbPrettyJson)) {
+			objectMapper = ObjectUtils.getIfNull(objectMapper, ObjectMapper::new);
+			//
+			if (isSelected(cbPrettyJson)) {
 				//
 				setContents(clipboard,
-						new StringSelection(writeValueAsString(objectMapper.writerWithDefaultPrettyPrinter(), list)),
+						new StringSelection(writeValueAsString(writerWithDefaultPrettyPrinter(objectMapper), list)),
 						null);
 				//
 			} else {
@@ -1107,6 +1108,27 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		} // if
 			//
 		actionPerformed(this, source);
+		//
+	}
+
+	private static ObjectWriter writerWithDefaultPrettyPrinter(final ObjectMapper instance) {
+		//
+		try {
+			//
+			if (instance == null || Narcissus.getObjectField(instance,
+					ObjectMapper.class.getDeclaredField("_serializationConfig")) == null) {
+				//
+				return null;
+				//
+			} // if
+				//
+		} catch (final NoSuchFieldException e) {
+			//
+			throw new RuntimeException(e);
+			//
+		} // try
+			//
+		return instance.writerWithDefaultPrettyPrinter();
 		//
 	}
 
