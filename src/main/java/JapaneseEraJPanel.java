@@ -1083,8 +1083,6 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 				//
 				Cell cell = null;
 				//
-				Object value = null;
-				//
 				final int columnCount = getColumnCount(tm);
 				//
 				for (int i = 0; tm != null && i < tm.getRowCount(); i++) {
@@ -1120,26 +1118,8 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 						//
 					for (int j = 0; j < columnCount; j++) {
 						//
-						if ((cell = row.createCell(row.getPhysicalNumberOfCells())) == null) {
-							//
-							continue;
-							//
-						} // if
-							//
-						if ((value = tm.getValueAt(i, j)) instanceof String || value instanceof Character) {
-							//
-							cell.setCellValue(Objects.toString(value));
-							//
-						} else if (value instanceof Number number && number != null) {
-							//
-							cell.setCellValue(number.doubleValue());
-							//
-						} else {
-							//
-							throw new IllegalStateException(Objects.toString(value.getClass()));
-							//
-						} // if
-							//
+						setCellValue(row.createCell(row.getPhysicalNumberOfCells()), tm.getValueAt(i, j));
+						//
 					} // for
 						//
 				} // for
@@ -1158,6 +1138,30 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 		actionPerformed(this, source);
 		//
+	}
+
+	private static void setCellValue(final Cell instance, final Object value) {
+		//
+		if (instance == null) {
+			//
+			return;
+			//
+		} // if
+			//
+		if (value instanceof String || value instanceof Character) {
+			//
+			instance.setCellValue(Objects.toString(value));
+			//
+		} else if (value instanceof Number number && number != null) {
+			//
+			instance.setCellValue(number.doubleValue());
+			//
+		} else {
+			//
+			throw new IllegalStateException(Objects.toString(value.getClass()));
+			//
+		} // if
+			//
 	}
 
 	private static void actionPerformed(final JapaneseEraJPanel instance, final Object source) {

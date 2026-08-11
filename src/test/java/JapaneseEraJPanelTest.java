@@ -37,6 +37,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.poi.ss.usermodel.Cell;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -48,7 +49,7 @@ import io.github.toolfactory.narcissus.Narcissus;
 
 class JapaneseEraJPanelTest {
 
-	private static Method METHOD_GET_NAME, METHOD_GET_CLASS = null;
+	private static Method METHOD_GET_NAME, METHOD_GET_CLASS, METHOD_SET_CELL_VALUE = null;
 
 	@BeforeSuite
 	void beforeSuite() throws NoSuchMethodException {
@@ -58,6 +59,8 @@ class JapaneseEraJPanelTest {
 		(METHOD_GET_NAME = clz.getDeclaredMethod("getName", Member.class)).setAccessible(true);
 		//
 		(METHOD_GET_CLASS = clz.getDeclaredMethod("getClass", Object.class)).setAccessible(true);
+		//
+		(METHOD_SET_CELL_VALUE = clz.getDeclaredMethod("setCellValue", Cell.class, Object.class)).setAccessible(true);
 		//
 	}
 
@@ -225,11 +228,15 @@ class JapaneseEraJPanelTest {
 
 	private JapaneseEraJPanel instance = null;
 
+	private IH ih = null;
+
 	@BeforeMethod
 	void beforeMethod() {
 		//
 		instance = ObjectUtils.getIfNull(instance,
 				() -> (JapaneseEraJPanel) Narcissus.allocateInstance(JapaneseEraJPanel.class));
+		//
+		ih = new IH();
 		//
 	}
 
@@ -358,8 +365,10 @@ class JapaneseEraJPanelTest {
 			//
 			if ((m = ArrayUtils.get(ms, i)) == null || m.isSynthetic()
 					|| (parameterTypes = m.getParameterTypes()) == null
-					|| Boolean.logicalAnd(Objects.equals(getName(m), "newInstance"),
-							Arrays.equals(parameterTypes, new Class<?>[] { Constructor.class, Object[].class }))) {
+					|| Boolean.logicalAnd(Objects.equals(name = getName(m), "newInstance"),
+							Arrays.equals(parameterTypes, new Class<?>[] { Constructor.class, Object[].class }))
+					|| Boolean.logicalAnd(Objects.equals(name, "setCellValue"),
+							Arrays.equals(parameterTypes, new Class<?>[] { Cell.class, Object.class }))) {
 				//
 				continue;
 				//
@@ -558,6 +567,31 @@ class JapaneseEraJPanelTest {
 		//
 		instance.actionPerformed(new ActionEvent(btnCopyHtml, 0, null));
 		//
+	}
+
+	@Test
+	public void testSetCellValue() throws Throwable {
+		//
+		final Cell cell = Reflection.newProxy(Cell.class, ih);
+		//
+		setCellValue(cell, "");
+		//
+		setCellValue(cell, ' ');
+		//
+		setCellValue(cell, Integer.valueOf(1));
+		//
+		Assert.assertThrows(IllegalStateException.class, () -> setCellValue(cell, Boolean.TRUE));
+		//
+	}
+
+	private static void setCellValue(final Cell instance, final Object value) throws Throwable {
+		try {
+			if (METHOD_SET_CELL_VALUE != null) {
+				METHOD_SET_CELL_VALUE.invoke(null, instance, value);
+			}
+		} catch (final InvocationTargetException e) {
+			throw e.getTargetException();
+		}
 	}
 
 }
