@@ -64,10 +64,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.FieldOrMethod;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.BIPUSH;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;

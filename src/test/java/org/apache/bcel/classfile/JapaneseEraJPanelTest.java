@@ -28,8 +28,6 @@ import javax.swing.JTextField;
 import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
-import org.apache.bcel.classfile.Field;
-import org.apache.bcel.classfile.FieldOrMethod;
 import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
