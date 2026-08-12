@@ -1,3 +1,5 @@
+package org.apache.bcel.classfile;
+
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;

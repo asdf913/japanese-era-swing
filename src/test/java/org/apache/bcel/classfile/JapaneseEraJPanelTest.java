@@ -1,3 +1,5 @@
+package org.apache.bcel.classfile;
+
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Array;

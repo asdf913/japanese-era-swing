@@ -91,7 +91,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>JapaneseEraJPanel</mainClass>
+									<mainClass>org.apache.bcel.classfile.JapaneseEraJPanel</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
