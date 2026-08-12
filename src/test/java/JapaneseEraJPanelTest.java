@@ -401,8 +401,6 @@ class JapaneseEraJPanelTest {
 		//
 		Collection<Object> collection = null;
 		//
-		IH ih = null;
-		//
 		for (int i = 0; ms != null && i < ms.length; i++) {
 			//
 			if ((m = ArrayUtils.get(ms, i)) == null || m.isSynthetic()
