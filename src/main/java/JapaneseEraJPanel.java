@@ -83,6 +83,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.function.FailableRunnable;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -976,23 +977,25 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		Map<Object, Object> map = null;
 		//
-		Object key = null, value = null;
+		MutablePair<Object, Object> mutablePair = null;
 		//
 		for (int i = 0; ins != null && i < Math.max(length, intValue(index, 0)); i++) {
 			//
-			if (ArrayUtils.get(ins, i) instanceof LDC ldc && ldc != null) {
+			if (ArrayUtils.get(ins, i) instanceof LDC ldc && ldc != null
+					&& (mutablePair = ObjectUtils.getIfNull(mutablePair, MutablePair::new)) != null) {
 				//
 				if (i > 0 && ArrayUtils.get(ins, i - 1) instanceof LDC) {
 					//
-					value = ldc.getValue(cpg);
+					mutablePair.setRight(ldc.getValue(cpg));
 					//
 				} else {
 					//
-					key = ldc.getValue(cpg);
+					mutablePair.setLeft(ldc.getValue(cpg));
 					//
 				} // if
 					//
-				put(map = ObjectUtils.getIfNull(map, LinkedHashMap::new), key, value);
+				put(map = ObjectUtils.getIfNull(map, LinkedHashMap::new), mutablePair.getLeft(),
+						mutablePair.getRight());
 				//
 			} // if
 				//
