@@ -26,6 +26,7 @@ import java.lang.reflect.Member;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.YearMonth;
 import java.time.chrono.JapaneseEra;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -680,7 +681,9 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 		//
 		SIPUSH sipush = null;
 		//
-		Number year, month, day = null;
+		YearMonth yearMonth = null;
+		//
+		Number day = null;
 		//
 		YearMonthDay yearMonthDay = null;
 		//
@@ -690,23 +693,22 @@ public class JapaneseEraJPanel extends JPanel implements ActionListener, DateCha
 			//
 			if ((sipush = cast(SIPUSH.class, ArrayUtils.get(ins, i))) != null && length > i + 5) {
 				//
-				year = getValue(sipush);
-				//
-				month = getNumberValue(ArrayUtils.get(ins, i + 1));
+				yearMonth = YearMonth.of(intValue(getValue(sipush), 0),
+						intValue(getNumberValue(ArrayUtils.get(ins, i + 1)), 0));
 				//
 				day = getNumberValue(ArrayUtils.get(ins, i + 2));
 				//
 				if ((putStatic = cast(PUTSTATIC.class, ArrayUtils.get(ins, i + 5))) != null) {
 					//
-					if (year == null || month == null || day == null) {
+					if (yearMonth == null || day == null) {
 						//
 						continue;
 						//
 					} // if
 						//
-					(yearMonthDay = new YearMonthDay()).year = year.intValue();
+					(yearMonthDay = new YearMonthDay()).year = yearMonth.getYear();
 					//
-					yearMonthDay.month = month.intValue();
+					yearMonthDay.month = yearMonth.getMonthValue();
 					//
 					yearMonthDay.day = day.intValue();
 					//
